@@ -9,6 +9,27 @@ public class Customer {
     private Integer dueDate;
     private Integer serviceTime;
 
+    public Customer(int customerIndex, int x, int y, int demand,
+                    int readyTime, int dueDate, int serviceTime){
+        this.customerIndex = customerIndex;
+        this.xCoordinate = x;
+        this.yCoordinate = y;
+        this.demand = demand;
+        this.readyTime = readyTime;
+        this.dueDate = dueDate;
+        this.serviceTime = serviceTime;
+    }
+
+    public Customer(int[] data){
+        this.customerIndex = data[0];
+        this.xCoordinate = data[1];
+        this.yCoordinate = data[2];
+        this.demand = data[3];
+        this.readyTime = data[4];
+        this.dueDate = data[5];
+        this.serviceTime = data[6];
+    }
+
     public Integer getCustomerIndex() {
         return customerIndex;
     }
