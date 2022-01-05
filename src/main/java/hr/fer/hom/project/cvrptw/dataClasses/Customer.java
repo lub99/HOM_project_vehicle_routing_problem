@@ -8,6 +8,8 @@ public class Customer {
     private Integer readyTime;
     private Integer dueDate;
     private Integer serviceTime;
+    private boolean served;
+    private Integer servedTime;
 
     public Customer(int customerIndex, int x, int y, int demand,
                     int readyTime, int dueDate, int serviceTime){
@@ -18,6 +20,7 @@ public class Customer {
         this.readyTime = readyTime;
         this.dueDate = dueDate;
         this.serviceTime = serviceTime;
+        this.served = false;
     }
 
     public Customer(int[] data){
@@ -56,5 +59,20 @@ public class Customer {
 
     public Integer getServiceTime() {
         return serviceTime;
+    }
+
+    public boolean getServiced() {
+        return serviced;
+    }
+
+    public Integer getServedTime() {
+        return servedTime;
+    }
+
+    public void setServed(boolean condition) {
+        this.served = condition;
+    }
+    public void setServedTime(int time) {
+        this.servedTime = time;
     }
 }

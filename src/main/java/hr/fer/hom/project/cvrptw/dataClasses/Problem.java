@@ -11,13 +11,14 @@ import java.util.List;
 
 public class Problem {
 
-    public int customerCount;
-    public List<Customer> customers;
-    public Customer depot;
-    public double[][] distances;
-    public int vehicleLimit;
-    public int vehicleCapacity;
-    public int vehicleCount;
+    private int customerCount;
+    private List<Customer> customers;
+    private Customer depot;
+    private double[][] distances;
+    //private int vehicleLimit;
+    private int vehicleCapacity;
+    //private int vehiclesUsed;
+    private List<Vehicle> vehicles;
 
     public Problem(){}
 
@@ -29,7 +30,29 @@ public class Problem {
         String distancesFile = "input/distances/i1.txt";
         //problem.importData(instanceFile);
         //problem.importDistanceMatrix(distancesFile);
+        Solution initialSolution = problem.greedyAlg();
 
+    }
+
+    private Solution greedyAlg() {
+        Solution solution = new Solution();
+        /*
+        dok postoji neposluzeni korisnik{   -> impl neku jednostavnu provjeru
+             uzmi novo vozilo  -> inicijalizirati novo vozilo, prvi korisnik skladiste
+             dok vozilo nekog moze posluziti{  -> provjera broja paketa u vozilu s potraznjom korisnika
+                                                  te provjera trenutnog vremena voznje sa zadanim service
+                                                  vremenima korisnika
+                 ako je vozilo u skladistu{
+                      sljedeci korisnik je npr najdalji korisnik -> dogovoriti
+                 inace{
+                      odabrati sljedeceg korisnika pomocu neke heuristike
+                 posluziti korisnika -> azurirati sve potrebno (korisnika i vozilo)
+                                        izracunati trenutno predenu udaljenosti i trenutno vrijeme
+             }
+             vratiti vozilo u skladiste -> ponovno azuriranje podataka
+         */
+
+        return solution;
     }
 
     private void importData(String instance) {
