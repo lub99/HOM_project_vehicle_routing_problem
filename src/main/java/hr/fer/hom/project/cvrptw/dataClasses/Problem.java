@@ -31,8 +31,8 @@ public class Problem {
 
         Problem problem = new Problem();
 
-        String instanceFile = "input/instances/i1.txt";
-        String distancesFile = "input/distances/i1.txt";
+        String instanceFile = args[0];
+        String distancesFile = args[1];
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
