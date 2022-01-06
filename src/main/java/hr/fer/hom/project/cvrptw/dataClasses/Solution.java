@@ -11,44 +11,64 @@ import java.util.stream.Collectors;
  */
 public class Solution {
 
-    private int totalDistance;
-    private int totalTime;
+    private Double totalDistance;
+    private Integer totalTime;
     //private int vehiclesUsedCount;
     private List<Vehicle> vehiclesUsed;
     private boolean feasible;
 
-    public Solution(){}
+    public Solution() {
+    }
 
-    public Solution(int totalDistance, int totalTime, List<Vehicle> vehiclesUsed){
-        this.totalDistance = totalDistance;
+    public Solution(int totalDistance, int totalTime, List<Vehicle> vehiclesUsed) {
+        this.totalDistance = (double) totalDistance;
         this.totalTime = totalTime;
         this.vehiclesUsed = vehiclesUsed;
         //this.vehiclesUsedCount = vehiclesUsed.size();
     }
 
-    public Integer getTotalDistance() {
-        return totalDistance;
+    public Double getTotalDistance() {
+        if (totalDistance != null) {
+            return totalDistance;
+        } else {
+            // calc total distance
+            return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
+        }
     }
 
     public Integer getTotalTime() {
-        return totalTime;
+        if (totalTime != null) {
+            return totalTime;
+        } else {
+            // calc total time
+            return null;
+        }
     }
 
-    public List<Vehicle> getVehiclesUsed() { return vehiclesUsed; }
+    public List<Vehicle> getVehiclesUsed() {
+        return vehiclesUsed;
+    }
 
-    public Integer getVehiclesUsedCount() { return vehiclesUsed.size(); }
+    public Integer getVehiclesUsedCount() {
+        return vehiclesUsed.size();
+    }
 
-    public boolean getFeasible() { return feasible; }
+    public boolean getFeasible() {
+        return feasible;
+    }
 
-    public void setTotalDistance(int distance) {
+    public void setTotalDistance(Double distance) {
         this.totalDistance = distance;
     }
+
     public void setTotalTime(int time) {
         this.totalTime = time;
     }
+
     public void setVehiclesUsed(List<Vehicle> vehicles) {
         this.vehiclesUsed = vehicles;
     }
+
     public void setFeasible(boolean feasible) {
         this.feasible = feasible;
     }
@@ -60,12 +80,12 @@ public class Solution {
     - ispisati totalDistance rjesenja
      */
 
-    public void print(){
+    public void print() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(vehiclesUsed.size()).append("\n");
 
         int index = 1;
-        for (var vehicle : vehiclesUsed){
+        for (var vehicle : vehiclesUsed) {
             var oneRoute = vehicle.getRoute()
                     .stream()
                     .map(Customer::printToString)
@@ -74,7 +94,7 @@ public class Solution {
             index++;
         }
 
-        stringBuilder.append(totalDistance).append("\n");
+        stringBuilder.append(getTotalDistance()).append("\n");
 
         System.out.println(stringBuilder);
     }
