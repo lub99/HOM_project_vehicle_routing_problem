@@ -32,6 +32,9 @@ public class Vehicle {
      te vremensko ogranicenje korisnika
      */
 
+    /*dodati gettere i settere za neke atribute
+     */
+
 
 
 }

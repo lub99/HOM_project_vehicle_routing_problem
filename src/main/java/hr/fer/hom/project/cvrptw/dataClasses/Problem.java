@@ -13,12 +13,13 @@ public class Problem {
 
     private int customerCount;
     private List<Customer> customers;
-    private Customer depot;
+    //private Customer depot; -> prvi korisnik u gornjoj listi
     private double[][] distances;
     //private int vehicleLimit;
     private int vehicleCapacity;
     //private int vehiclesUsed;
     private List<Vehicle> vehicles;
+    private List<Integer> unservedCustomerIndexes;
 
     public Problem(){}
 
@@ -36,6 +37,22 @@ public class Problem {
 
     private Solution greedyAlg() {
         Solution solution = new Solution();
+        int unservedCustomersCount = this.unservedCustomerIndexes.size();
+        int vehicleIndex = 0;
+        while (unservedCustomersCount > 0){
+            Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, customers.get(0));
+            boolean canServe = true;
+            boolean vehicleInDepot = true;
+            while(canServe){
+                if(vehicleInDepot){
+                    //pronaci najdaljeg korisnika iz skladista ovisno o neposluzenim korisnicima
+                    vehicleInDepot = false;
+                }else{
+                    //pronaci sljedeceg najboljeg korisnika -> heuristika
+                }
+                //provjera moze li vozilo jos nekog posluziti
+            }
+        }
         /*
         dok postoji neposluzeni korisnik{   -> impl neku jednostavnu provjeru
              uzmi novo vozilo  -> inicijalizirati novo vozilo, prvi korisnik skladiste
@@ -74,11 +91,8 @@ public class Problem {
             while (row != null) {
                 customerData = Arrays.stream(row.strip().split("\\s+")).mapToInt(Integer::parseInt).toArray();
                 Customer c = new Customer(customerData);
-                if(row_num == 0){
-                    this.depot = c;
-                }else{
-                    this.customers.add(c);
-                }
+                this.customers.add(c);
+                if(row_num != 0) this.unservedCustomerIndexes.add(c.getCustomerIndex());
                 row = reader.readLine();
                 row_num++;
             }
