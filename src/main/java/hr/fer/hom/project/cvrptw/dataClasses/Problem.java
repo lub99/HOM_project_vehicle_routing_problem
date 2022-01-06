@@ -7,7 +7,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Problem {
 
@@ -29,8 +33,8 @@ public class Problem {
 
         String instanceFile = "input/instances/i1.txt";
         String distancesFile = "input/distances/i1.txt";
-        //problem.importData(instanceFile);
-        //problem.importDistanceMatrix(distancesFile);
+        problem.importData(instanceFile);
+        problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
 
     }
@@ -44,7 +48,7 @@ public class Problem {
             Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, customers.get(0));
             boolean canServe = true;
             boolean vehicleInDepot = true;
-            Customer nextCustomer, lastCustomer;
+            Customer nextCustomer, lastCustomer = null;
             while(canServe){
                 if(vehicleInDepot){
                     //pronaci najdaljeg korisnika iz skladista ovisno o neposluzenim korisnicima
@@ -52,7 +56,10 @@ public class Problem {
                     vehicleInDepot = false;
                 }else{
                     //pronaci sljedeceg najboljeg korisnika -> heuristika
+                    int[] sortedIndexes = sortCustomerIndexesByDistance(lastCustomer);
+                    nextCustomer = findBestNextCustomer(sortedIndexes);
                 }
+                lastCustomer = nextCustomer;
                 //dodati korisnika u vozilo -> azurirati sve potrebne podatke
                 //provjera moze li vozilo jos nekog posluziti
             }
@@ -82,6 +89,33 @@ public class Problem {
     }
 
     /*
+    Metoda pronalazi najboljeg korisnika kojeg ce se sljedeće obići
+    Uzima se 5 najblizih neposluzenih susjeda te odabiremo onog kojeg
+    mozemo posluziti s obzirom na vremensko ogranicenje, a takoder ima
+    minimalnu razliku trenutnog vremena s servicedTime-a
+    Ako nijednog susjeda ne mozemo posluziti zbog vremenskog ogranicenja vratiti null
+       -> tada vozilo vracamo u skladiste
+    Potrebni podaci o vozilu (trenutno vrijeme)
+     */
+    private Customer findBestNextCustomer(int[] sortedIndexes) {
+        return null;
+    }
+
+    /*
+    Metoda sortira korisnike prema udaljenosti od trazenog korisnika
+    Vraca se polje indeksa korisnika
+     */
+    private int[] sortCustomerIndexesByDistance(Customer startingCustomer){
+        int startIndex = startingCustomer.getCustomerIndex();
+        List<Integer> sortedIndices = IntStream.range(0, this.distances[startIndex].length)
+                .boxed().sorted((i, j) -> (Double.valueOf(this.distances[startIndex][i]))
+                        .compareTo(this.distances[startIndex][j]) )
+                .mapToInt(ele -> ele).boxed().collect(Collectors.toList());
+        sortedIndices.remove(0);
+        return sortedIndices.stream().mapToInt(i->i).toArray();
+    }
+
+    /*
     Metoda trazi najdaljeg korisnika od skladista ovisno o trenutno neposluzenim korisnicima
      */
     private Customer findFarthestCustomerFromDepot() {
@@ -101,6 +135,7 @@ public class Problem {
 
     private void importData(String instance) {
         this.customers = new ArrayList<>();
+        this.unservedCustomerIndexes = new ArrayList<>();
         try {
             Path path = Paths.get(instance);
             BufferedReader reader = new BufferedReader(Files.newBufferedReader(path));
@@ -135,16 +170,16 @@ public class Problem {
             Path path = Paths.get(distancesFile);
             int lineCount = (int)(Files.lines(path).count());
             BufferedReader reader = new BufferedReader(Files.newBufferedReader(path));
-            double[][] data = new double[lineCount][lineCount];
+            this.distances = new double[lineCount][lineCount];
             for (int i=0; i<lineCount; i++){
                 String row = reader.readLine();
-                data[i] = Arrays.stream(row.strip().split("\\s+")).mapToDouble(Double::parseDouble).toArray();
+                this.distances[i] = Arrays.stream(row.strip().split("\\s+")).mapToDouble(Double::parseDouble).toArray();
                 //System.out.println(Arrays.toString(data[i]));
             }
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
 }

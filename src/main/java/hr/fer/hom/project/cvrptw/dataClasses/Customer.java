@@ -62,8 +62,8 @@ public class Customer {
         return serviceTime;
     }
 
-    public boolean getServiced() {
-        return serviced;
+    public boolean getServed() {
+        return served;
     }
 
     public Integer getServedTime() {
@@ -83,4 +83,5 @@ public class Customer {
     public void setPositionOnRoute(int position) {
         this.positionOnRoute = position;
     }
+
 }
