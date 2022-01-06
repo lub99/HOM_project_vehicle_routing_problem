@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -17,13 +15,14 @@ public class Problem {
 
     private int customerCount;
     private List<Customer> customers;
-    //private Customer depot; -> prvi korisnik u gornjoj listi
+    private Customer depot; //-> takoder prvi korisnik u gornjoj listi
     private double[][] distances;
     private int vehicleLimit;
     private int vehicleCapacity;
     //private int vehiclesUsed;
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
+    private final int greedyHeuristicParam = 5;
 
     public Problem(){}
 
@@ -42,49 +41,39 @@ public class Problem {
     private Solution greedyAlg() {
         Solution solution = new Solution();
         int unservedCustomersCount = this.unservedCustomerIndexes.size();
+        this.vehicles = new ArrayList<>();
         int vehicleIndex = 0;
         while (unservedCustomersCount > 0 && this.vehicles.size() < this.vehicleLimit){
-               //dodati provjeru za vehicleLimit -> ako se pogodi rjesenje je infeasible
-            Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, customers.get(0));
-            boolean canServe = true;
+            Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, this.depot);
             boolean vehicleInDepot = true;
             Customer nextCustomer, lastCustomer = null;
-            while(canServe){
+            while(true){
                 if(vehicleInDepot){
-                    //pronaci najdaljeg korisnika iz skladista ovisno o neposluzenim korisnicima
-                    nextCustomer = findFarthestCustomerFromDepot();
+                    nextCustomer = findFarthestUnservedCustomerFromDepot();
                     vehicleInDepot = false;
                 }else{
-                    //pronaci sljedeceg najboljeg korisnika -> heuristika
                     int[] sortedIndexes = sortCustomerIndexesByDistance(lastCustomer);
-                    nextCustomer = findBestNextCustomer(sortedIndexes);
+                    nextCustomer = findBestNextCustomer(vehicle, sortedIndexes);
                 }
+                if (nextCustomer == null) break;
+                this.unservedCustomerIndexes.remove(nextCustomer.getCustomerIndex());
+                unservedCustomersCount--;
+                vehicle.addCustomerToEnd(nextCustomer, this.distances);
                 lastCustomer = nextCustomer;
-                //dodati korisnika u vozilo -> azurirati sve potrebne podatke
-                //provjera moze li vozilo jos nekog posluziti
             }
+            vehicle.returnToGarage(this.distances);
+            this.vehicles.add(vehicle);
+            this.depot.setPositionOnRoute(0.0);
+            this.depot.setServedTime(0);
+            vehicleIndex++;
         }
         if (unservedCustomersCount > 0){
             System.out.println("Infeasible solution");
             solution.setFeasible(false);
             return solution;
         }
-        /*
-        dok postoji neposluzeni korisnik{   -> impl neku jednostavnu provjeru
-             uzmi novo vozilo  -> inicijalizirati novo vozilo, prvi korisnik skladiste
-             dok vozilo nekog moze posluziti{  -> provjera broja paketa u vozilu s potraznjom korisnika
-                                                  te provjera trenutnog vremena voznje sa zadanim service
-                                                  vremenima korisnika
-                 ako je vozilo u skladistu{
-                      sljedeci korisnik je npr najdalji korisnik -> dogovoriti
-                 inace{
-                      odabrati sljedeceg korisnika pomocu neke heuristike
-                 posluziti korisnika -> azurirati sve potrebno (korisnika i vozilo)
-                                        izracunati trenutno predenu udaljenosti i trenutno vrijeme
-             }
-             vratiti vozilo u skladiste -> ponovno azuriranje podataka
-         */
-
+        solution.setVehiclesUsed(vehicles);
+        solution.print();
         return solution;
     }
 
@@ -95,10 +84,35 @@ public class Problem {
     minimalnu razliku trenutnog vremena s servicedTime-a
     Ako nijednog susjeda ne mozemo posluziti zbog vremenskog ogranicenja vratiti null
        -> tada vozilo vracamo u skladiste
-    Potrebni podaci o vozilu (trenutno vrijeme)
      */
-    private Customer findBestNextCustomer(int[] sortedIndexes) {
-        return null;
+    private Customer findBestNextCustomer(Vehicle vehicle, int[] sortedIndexes) {
+        int unservedCustomersFound = 0;
+        List<Customer> candidateCustomers = new ArrayList<>();
+        for (int i=0; i<sortedIndexes.length; i++){
+            Customer customer = this.customers.get(sortedIndexes[i]);
+            if (!customer.isServed()){
+                candidateCustomers.add(customer);
+                unservedCustomersFound++;
+            }
+            if (unservedCustomersFound > this.greedyHeuristicParam) break;
+        }
+        Customer previousCustomer = vehicle.getLastCustomerInRoute();
+        Customer bestFound = null;
+        int minTimeToDueDateOfFeasibleSolution = Integer.MAX_VALUE;
+        for (Customer customer : candidateCustomers){
+             int diff = customer.getDueDate() - vehicle.getRouteTime();
+             if (diff <= 0) continue;
+             int potentialServedTimeOfNextCustomer = vehicle.calculateServedTimeOfNextCustomer(
+                     previousCustomer, customer, this.distances);
+             int timeOfReturnToDepot = potentialServedTimeOfNextCustomer + customer.getServiceTime()
+                     + (int)(distances[customer.getCustomerIndex()][depot.getCustomerIndex()]+1);
+             if (timeOfReturnToDepot > depot.getDueDate()) continue;
+             if (diff < minTimeToDueDateOfFeasibleSolution){
+                 minTimeToDueDateOfFeasibleSolution = diff;
+                 bestFound = customer;
+             }
+        }
+        return bestFound;
     }
 
     /*
@@ -118,7 +132,7 @@ public class Problem {
     /*
     Metoda trazi najdaljeg korisnika od skladista ovisno o trenutno neposluzenim korisnicima
      */
-    private Customer findFarthestCustomerFromDepot() {
+    private Customer findFarthestUnservedCustomerFromDepot() {
         double maxDistance = 0;
         double distance;
         int farthestCustomerIndex = 0;
@@ -153,8 +167,14 @@ public class Problem {
             while (row != null) {
                 customerData = Arrays.stream(row.strip().split("\\s+")).mapToInt(Integer::parseInt).toArray();
                 Customer c = new Customer(customerData);
+                if (row_num == 0){
+                    c.setServedTime(0);
+                    c.setPositionOnRoute(0.0);
+                    this.depot = c;
+                }else{
+                    this.unservedCustomerIndexes.add(c.getCustomerIndex());
+                }
                 this.customers.add(c);
-                if(row_num != 0) this.unservedCustomerIndexes.add(c.getCustomerIndex());
                 row = reader.readLine();
                 row_num++;
             }
@@ -173,8 +193,8 @@ public class Problem {
             this.distances = new double[lineCount][lineCount];
             for (int i=0; i<lineCount; i++){
                 String row = reader.readLine();
-                this.distances[i] = Arrays.stream(row.strip().split("\\s+")).mapToDouble(Double::parseDouble).toArray();
-                //System.out.println(Arrays.toString(data[i]));
+                this.distances[i] = Arrays.stream(row.strip().split("\\s+"))
+                        .mapToDouble(Double::parseDouble).toArray();
             }
             reader.close();
         } catch (IOException e) {
