@@ -1,6 +1,7 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Solution cuva informacije o trenutnom rjesenju
@@ -58,4 +59,23 @@ public class Solution {
     - iterirati po vozilima, ispisati indeks vozila, indeks korisnika i njegov servedTime
     - ispisati totalDistance rjesenja
      */
+
+    public void print(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(vehiclesUsed.size()).append("\n");
+
+        int index = 1;
+        for (var vehicle : vehiclesUsed){
+            var oneRoute = vehicle.getRoute()
+                    .stream()
+                    .map(Customer::printToString)
+                    .collect(Collectors.joining("->"));
+            stringBuilder.append(index).append(": ").append(oneRoute).append("\n");
+            index++;
+        }
+
+        stringBuilder.append(totalDistance).append("\n");
+
+        System.out.println(stringBuilder);
+    }
 }
