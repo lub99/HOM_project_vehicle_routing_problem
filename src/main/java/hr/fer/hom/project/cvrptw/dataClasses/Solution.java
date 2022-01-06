@@ -1,6 +1,7 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Solution cuva informacije o trenutnom rjesenju
@@ -39,6 +40,7 @@ public class Solution {
 
     public boolean getFeasible() { return feasible; }
 
+    //impl racunanje uk udaljenosti i vremena iz info o vozilima
     public void setTotalDistance(int distance) {
         this.totalDistance = distance;
     }
@@ -52,10 +54,20 @@ public class Solution {
         this.feasible = feasible;
     }
 
-    /*
-    Dodati ispis rjesenja kao u pdf-u projekta
-    - ispis broja vozila
-    - iterirati po vozilima, ispisati indeks vozila, indeks korisnika i njegov servedTime
-    - ispisati totalDistance rjesenja
-     */
+    public void print(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(vehiclesUsed.size()).append("\n");
+
+        for (var vehicle : vehiclesUsed){
+            var oneRoute = vehicle.getRoute()
+                    .stream()
+                    .map(Customer::printToString)
+                    .collect(Collectors.joining("->"));
+            stringBuilder.append(vehicle.getVehicleIndex()).append(": ").append(oneRoute).append("\n");
+        }
+
+        //stringBuilder.append(totalDistance).append("\n");
+
+        System.out.println(stringBuilder);
+    }
 }

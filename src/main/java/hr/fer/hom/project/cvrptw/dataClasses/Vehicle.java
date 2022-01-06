@@ -15,6 +15,7 @@ public class Vehicle {
     public Vehicle(int vehicleIndex, int capacityLimit, Customer depot){
         this.vehicleIndex = vehicleIndex;
         this.capacityLimit = capacityLimit;
+        this.remainingCapacity = capacityLimit;
         this.route = new ArrayList<>();
         this.route.add(depot);
         this.routeTime = 0;
@@ -59,9 +60,9 @@ public class Vehicle {
     }
 
     public void addCustomerToEnd(Customer c, double[][] distances){
+        Customer lastCustomer = getLastCustomerInRoute();
         this.route.add(c);
         this.remainingCapacity -= c.getDemand();
-        Customer lastCustomer = getLastCustomerInRoute();
         this.setRouteLength(calculateRoutePositionOfNextCustomer(lastCustomer, c, distances));
         this.setRouteTime(calculateServedTimeOfNextCustomer(lastCustomer, c, distances));
         c.setServedTime(this.getRouteTime());

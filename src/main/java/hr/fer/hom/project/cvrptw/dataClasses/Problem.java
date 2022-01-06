@@ -41,9 +41,10 @@ public class Problem {
     private Solution greedyAlg() {
         Solution solution = new Solution();
         int unservedCustomersCount = this.unservedCustomerIndexes.size();
+        this.vehicles = new ArrayList<>();
         int vehicleIndex = 0;
         while (unservedCustomersCount > 0 && this.vehicles.size() < this.vehicleLimit){
-            Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, customers.get(0));
+            Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, this.depot);
             boolean vehicleInDepot = true;
             Customer nextCustomer, lastCustomer = null;
             while(true){
@@ -62,6 +63,8 @@ public class Problem {
             }
             vehicle.returnToGarage(this.distances);
             this.vehicles.add(vehicle);
+            this.depot.setPositionOnRoute(0.0);
+            this.depot.setServedTime(0);
             vehicleIndex++;
         }
         if (unservedCustomersCount > 0){
@@ -70,6 +73,7 @@ public class Problem {
             return solution;
         }
         solution.setVehiclesUsed(vehicles);
+        solution.print();
         return solution;
     }
 
@@ -86,7 +90,7 @@ public class Problem {
         List<Customer> candidateCustomers = new ArrayList<>();
         for (int i=0; i<sortedIndexes.length; i++){
             Customer customer = this.customers.get(sortedIndexes[i]);
-            if (customer.isServed()){
+            if (!customer.isServed()){
                 candidateCustomers.add(customer);
                 unservedCustomersFound++;
             }

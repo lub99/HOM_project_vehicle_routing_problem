@@ -83,5 +83,8 @@ public class Customer {
     public void setPositionOnRoute(double position) {
         this.positionOnRoute = position;
     }
+    public String printToString(){
+        return customerIndex + "(" + servedTime + ")";
+    }
 
 }
