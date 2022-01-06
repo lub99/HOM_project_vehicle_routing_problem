@@ -15,7 +15,7 @@ public class Problem {
     private List<Customer> customers;
     //private Customer depot; -> prvi korisnik u gornjoj listi
     private double[][] distances;
-    //private int vehicleLimit;
+    private int vehicleLimit;
     private int vehicleCapacity;
     //private int vehiclesUsed;
     private List<Vehicle> vehicles;
@@ -39,19 +39,28 @@ public class Problem {
         Solution solution = new Solution();
         int unservedCustomersCount = this.unservedCustomerIndexes.size();
         int vehicleIndex = 0;
-        while (unservedCustomersCount > 0){
+        while (unservedCustomersCount > 0 && this.vehicles.size() < this.vehicleLimit){
+               //dodati provjeru za vehicleLimit -> ako se pogodi rjesenje je infeasible
             Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, customers.get(0));
             boolean canServe = true;
             boolean vehicleInDepot = true;
+            Customer nextCustomer, lastCustomer;
             while(canServe){
                 if(vehicleInDepot){
                     //pronaci najdaljeg korisnika iz skladista ovisno o neposluzenim korisnicima
+                    nextCustomer = findFarthestCustomerFromDepot();
                     vehicleInDepot = false;
                 }else{
                     //pronaci sljedeceg najboljeg korisnika -> heuristika
                 }
+                //dodati korisnika u vozilo -> azurirati sve potrebne podatke
                 //provjera moze li vozilo jos nekog posluziti
             }
+        }
+        if (unservedCustomersCount > 0){
+            System.out.println("Infeasible solution");
+            solution.setFeasible(false);
+            return solution;
         }
         /*
         dok postoji neposluzeni korisnik{   -> impl neku jednostavnu provjeru
@@ -70,6 +79,24 @@ public class Problem {
          */
 
         return solution;
+    }
+
+    /*
+    Metoda trazi najdaljeg korisnika od skladista ovisno o trenutno neposluzenim korisnicima
+     */
+    private Customer findFarthestCustomerFromDepot() {
+        double maxDistance = 0;
+        double distance;
+        int farthestCustomerIndex = 0;
+        int unservedCustomersCount = this.unservedCustomerIndexes.size();
+        for (int i=0; i<unservedCustomersCount; i++){
+            distance = this.distances[0][this.unservedCustomerIndexes.get(i)];
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                farthestCustomerIndex = this.unservedCustomerIndexes.get(i);
+            }
+        }
+        return this.customers.get(farthestCustomerIndex);
     }
 
     private void importData(String instance) {

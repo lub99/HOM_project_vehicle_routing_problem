@@ -4,9 +4,9 @@ import java.util.List;
 
 /**
  * Solution cuva informacije o trenutnom rjesenju
- * @totalDistance - ukupna prijedena udaljenost svih vozila
- * @totalTime - ukupno iskoristeno vrijeme svih vozila
- * @vehiclesUsed - iskoristena vozila
+ * totalDistance - ukupna prijedena udaljenost svih vozila
+ * totalTime - ukupno iskoristeno vrijeme svih vozila
+ * vehiclesUsed - iskoristena vozila
  */
 public class Solution {
 
@@ -14,6 +14,7 @@ public class Solution {
     private int totalTime;
     //private int vehiclesUsedCount;
     private List<Vehicle> vehiclesUsed;
+    private boolean feasible;
 
     public Solution(){}
 
@@ -34,9 +35,9 @@ public class Solution {
 
     public List<Vehicle> getVehiclesUsed() { return vehiclesUsed; }
 
-    public Integer getVehiclesUsedCount() {
-        return vehiclesUsed.size();
-    }
+    public Integer getVehiclesUsedCount() { return vehiclesUsed.size(); }
+
+    public boolean getFeasible() { return feasible; }
 
     public void setTotalDistance(int distance) {
         this.totalDistance = distance;
@@ -46,6 +47,9 @@ public class Solution {
     }
     public void setVehiclesUsed(List<Vehicle> vehicles) {
         this.vehiclesUsed = vehicles;
+    }
+    public void setFeasible(boolean feasible) {
+        this.feasible = feasible;
     }
 
     /*
