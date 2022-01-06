@@ -62,7 +62,7 @@ public class Customer {
         return serviceTime;
     }
 
-    public boolean getServed() {
+    public boolean isServed() {
         return served;
     }
 
