@@ -1,5 +1,7 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
+import hr.fer.hom.project.cvrptw.utils.Util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,10 +36,12 @@ public class Problem {
         String instanceFile = args[0];
         String distancesFile = args[1];
         String outputFile = args[2];
+        String outputFileForPython = args[3];
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
         initialSolution.printToFile(outputFile);
+        Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
     }
 
