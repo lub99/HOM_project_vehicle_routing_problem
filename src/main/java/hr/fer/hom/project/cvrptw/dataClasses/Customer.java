@@ -10,7 +10,7 @@ public class Customer {
     private Integer serviceTime;
     private boolean served;
     private Integer servedTime;
-    private Integer positionOnRoute;
+    private Double positionOnRoute;
 
     public Customer(int customerIndex, int x, int y, int demand,
                     int readyTime, int dueDate, int serviceTime){
@@ -70,7 +70,7 @@ public class Customer {
         return servedTime;
     }
 
-    public Integer getPositionOnRoute() {
+    public Double getPositionOnRoute() {
         return positionOnRoute;
     }
 
@@ -80,7 +80,7 @@ public class Customer {
     public void setServedTime(int time) {
         this.servedTime = time;
     }
-    public void setPositionOnRoute(int position) {
+    public void setPositionOnRoute(double position) {
         this.positionOnRoute = position;
     }
 
