@@ -87,8 +87,4 @@ public class Customer {
         return customerIndex + "(" + servedTime + ")";
     }
 
-    public String printToString(){
-        return customerIndex + "(" + servedTime + ")";
-    }
-
 }
