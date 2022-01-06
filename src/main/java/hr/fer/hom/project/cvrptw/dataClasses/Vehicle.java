@@ -83,7 +83,7 @@ public class Vehicle {
     }
 
     public void returnToGarage(double[][] distances) {
-        Customer depot = this.route.get(0);
+        Customer depot = this.route.get(0).copy();
         addCustomerToEnd(depot, distances);
     }
 }

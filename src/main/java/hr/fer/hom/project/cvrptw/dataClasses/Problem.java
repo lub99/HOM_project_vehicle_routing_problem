@@ -24,7 +24,8 @@ public class Problem {
     private List<Integer> unservedCustomerIndexes;
     private final int greedyHeuristicParam = 5;
 
-    public Problem(){}
+    public Problem() {
+    }
 
     public static void main(String[] args) {
 
@@ -43,15 +44,15 @@ public class Problem {
         int unservedCustomersCount = this.unservedCustomerIndexes.size();
         this.vehicles = new ArrayList<>();
         int vehicleIndex = 0;
-        while (unservedCustomersCount > 0 && this.vehicles.size() < this.vehicleLimit){
+        while (unservedCustomersCount > 0 && this.vehicles.size() < this.vehicleLimit) {
             Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, this.depot);
             boolean vehicleInDepot = true;
             Customer nextCustomer, lastCustomer = null;
-            while(true){
-                if(vehicleInDepot){
+            while (true) {
+                if (vehicleInDepot) {
                     nextCustomer = findFarthestUnservedCustomerFromDepot();
                     vehicleInDepot = false;
-                }else{
+                } else {
                     int[] sortedIndexes = sortCustomerIndexesByDistance(lastCustomer);
                     nextCustomer = findBestNextCustomer(vehicle, sortedIndexes);
                 }
@@ -67,7 +68,7 @@ public class Problem {
             this.depot.setServedTime(0);
             vehicleIndex++;
         }
-        if (unservedCustomersCount > 0){
+        if (unservedCustomersCount > 0) {
             System.out.println("Infeasible solution");
             solution.setFeasible(false);
             return solution;
@@ -88,9 +89,9 @@ public class Problem {
     private Customer findBestNextCustomer(Vehicle vehicle, int[] sortedIndexes) {
         int unservedCustomersFound = 0;
         List<Customer> candidateCustomers = new ArrayList<>();
-        for (int i=0; i<sortedIndexes.length; i++){
+        for (int i = 0; i < sortedIndexes.length; i++) {
             Customer customer = this.customers.get(sortedIndexes[i]);
-            if (!customer.isServed()){
+            if (!customer.isServed()) {
                 candidateCustomers.add(customer);
                 unservedCustomersFound++;
             }
@@ -99,18 +100,18 @@ public class Problem {
         Customer previousCustomer = vehicle.getLastCustomerInRoute();
         Customer bestFound = null;
         int minTimeToDueDateOfFeasibleSolution = Integer.MAX_VALUE;
-        for (Customer customer : candidateCustomers){
-             int diff = customer.getDueDate() - vehicle.getRouteTime();
-             if (diff <= 0) continue;
-             int potentialServedTimeOfNextCustomer = vehicle.calculateServedTimeOfNextCustomer(
-                     previousCustomer, customer, this.distances);
-             int timeOfReturnToDepot = potentialServedTimeOfNextCustomer + customer.getServiceTime()
-                     + (int)(distances[customer.getCustomerIndex()][depot.getCustomerIndex()]+1);
-             if (timeOfReturnToDepot > depot.getDueDate()) continue;
-             if (diff < minTimeToDueDateOfFeasibleSolution){
-                 minTimeToDueDateOfFeasibleSolution = diff;
-                 bestFound = customer;
-             }
+        for (Customer customer : candidateCustomers) {
+            int diff = customer.getDueDate() - vehicle.getRouteTime();
+            if (diff <= 0) continue;
+            int potentialServedTimeOfNextCustomer = vehicle.calculateServedTimeOfNextCustomer(
+                    previousCustomer, customer, this.distances);
+            int timeOfReturnToDepot = potentialServedTimeOfNextCustomer + customer.getServiceTime()
+                    + (int) (distances[customer.getCustomerIndex()][depot.getCustomerIndex()] + 1);
+            if (timeOfReturnToDepot > depot.getDueDate()) continue;
+            if (diff < minTimeToDueDateOfFeasibleSolution) {
+                minTimeToDueDateOfFeasibleSolution = diff;
+                bestFound = customer;
+            }
         }
         return bestFound;
     }
@@ -119,14 +120,14 @@ public class Problem {
     Metoda sortira korisnike prema udaljenosti od trazenog korisnika
     Vraca se polje indeksa korisnika
      */
-    private int[] sortCustomerIndexesByDistance(Customer startingCustomer){
+    private int[] sortCustomerIndexesByDistance(Customer startingCustomer) {
         int startIndex = startingCustomer.getCustomerIndex();
         List<Integer> sortedIndices = IntStream.range(0, this.distances[startIndex].length)
                 .boxed().sorted((i, j) -> (Double.valueOf(this.distances[startIndex][i]))
-                        .compareTo(this.distances[startIndex][j]) )
+                        .compareTo(this.distances[startIndex][j]))
                 .mapToInt(ele -> ele).boxed().collect(Collectors.toList());
         sortedIndices.remove(0);
-        return sortedIndices.stream().mapToInt(i->i).toArray();
+        return sortedIndices.stream().mapToInt(i -> i).toArray();
     }
 
     /*
@@ -137,7 +138,7 @@ public class Problem {
         double distance;
         int farthestCustomerIndex = 0;
         int unservedCustomersCount = this.unservedCustomerIndexes.size();
-        for (int i=0; i<unservedCustomersCount; i++){
+        for (int i = 0; i < unservedCustomersCount; i++) {
             distance = this.distances[0][this.unservedCustomerIndexes.get(i)];
             if (distance > maxDistance) {
                 maxDistance = distance;
@@ -158,7 +159,7 @@ public class Problem {
             String[] vehicleInfo = reader.readLine().strip().split("\\s+");
             this.vehicleLimit = Integer.parseInt(vehicleInfo[0]);
             this.vehicleCapacity = Integer.parseInt(vehicleInfo[1]);
-            for(int i=0; i<4; i++){
+            for (int i = 0; i < 4; i++) {
                 reader.readLine();
             }
             int[] customerData;
@@ -167,11 +168,11 @@ public class Problem {
             while (row != null) {
                 customerData = Arrays.stream(row.strip().split("\\s+")).mapToInt(Integer::parseInt).toArray();
                 Customer c = new Customer(customerData);
-                if (row_num == 0){
+                if (row_num == 0) {
                     c.setServedTime(0);
                     c.setPositionOnRoute(0.0);
                     this.depot = c;
-                }else{
+                } else {
                     this.unservedCustomerIndexes.add(c.getCustomerIndex());
                 }
                 this.customers.add(c);
@@ -188,10 +189,10 @@ public class Problem {
     private void importDistanceMatrix(String distancesFile) {
         try {
             Path path = Paths.get(distancesFile);
-            int lineCount = (int)(Files.lines(path).count());
+            int lineCount = (int) (Files.lines(path).count());
             BufferedReader reader = new BufferedReader(Files.newBufferedReader(path));
             this.distances = new double[lineCount][lineCount];
-            for (int i=0; i<lineCount; i++){
+            for (int i = 0; i < lineCount; i++) {
                 String row = reader.readLine();
                 this.distances[i] = Arrays.stream(row.strip().split("\\s+"))
                         .mapToDouble(Double::parseDouble).toArray();

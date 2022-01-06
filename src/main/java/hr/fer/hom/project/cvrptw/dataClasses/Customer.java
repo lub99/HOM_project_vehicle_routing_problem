@@ -1,5 +1,7 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
+import java.util.Objects;
+
 public class Customer {
     private Integer customerIndex;
     private Integer xCoordinate;
@@ -13,7 +15,7 @@ public class Customer {
     private Double positionOnRoute;
 
     public Customer(int customerIndex, int x, int y, int demand,
-                    int readyTime, int dueDate, int serviceTime){
+                    int readyTime, int dueDate, int serviceTime) {
         this.customerIndex = customerIndex;
         this.xCoordinate = x;
         this.yCoordinate = y;
@@ -24,7 +26,7 @@ public class Customer {
         this.served = false;
     }
 
-    public Customer(int[] data){
+    public Customer(int[] data) {
         this.customerIndex = data[0];
         this.xCoordinate = data[1];
         this.yCoordinate = data[2];
@@ -77,14 +79,44 @@ public class Customer {
     public void setServed(boolean condition) {
         this.served = condition;
     }
+
     public void setServedTime(int time) {
         this.servedTime = time;
     }
+
     public void setPositionOnRoute(double position) {
         this.positionOnRoute = position;
     }
-    public String printToString(){
+
+    public String printToString() {
         return customerIndex + "(" + servedTime + ")";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(customerIndex, customer.customerIndex) && Objects.equals(servedTime, customer.servedTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(customerIndex, servedTime);
+    }
+
+    public Customer copy() {
+        var copyCustomer = new Customer(
+                customerIndex,
+                xCoordinate,
+                yCoordinate,
+                demand,
+                readyTime,
+                dueDate,
+                serviceTime);
+        copyCustomer.setServed(served);
+        copyCustomer.setServedTime(servedTime);
+        copyCustomer.setPositionOnRoute(positionOnRoute);
+        return copyCustomer;
+    }
 }
