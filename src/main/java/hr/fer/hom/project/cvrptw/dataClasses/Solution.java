@@ -47,4 +47,11 @@ public class Solution {
     public void setVehiclesUsed(List<Vehicle> vehicles) {
         this.vehiclesUsed = vehicles;
     }
+
+    /*
+    Dodati ispis rjesenja kao u pdf-u projekta
+    - ispis broja vozila
+    - iterirati po vozilima, ispisati indeks vozila, indeks korisnika i njegov servedTime
+    - ispisati totalDistance rjesenja
+     */
 }
