@@ -1,5 +1,8 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +83,8 @@ public class Solution {
     - ispisati totalDistance rjesenja
      */
 
-    public void print() {
+    @Override
+    public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(vehiclesUsed.size()).append("\n");
 
@@ -96,6 +100,17 @@ public class Solution {
 
         stringBuilder.append(getTotalDistance()).append("\n");
 
-        System.out.println(stringBuilder);
+        return stringBuilder.toString();
+    }
+
+    public void printToFile(String outputFile) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+            writer.write(this.toString());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

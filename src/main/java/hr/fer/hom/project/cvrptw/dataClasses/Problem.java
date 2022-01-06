@@ -33,9 +33,11 @@ public class Problem {
 
         String instanceFile = args[0];
         String distancesFile = args[1];
+        String outputFile = args[2];
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
+        initialSolution.printToFile(outputFile);
 
     }
 
@@ -74,7 +76,7 @@ public class Problem {
             return solution;
         }
         solution.setVehiclesUsed(vehicles);
-        solution.print();
+        System.out.println(solution);
         return solution;
     }
 
