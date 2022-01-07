@@ -237,8 +237,17 @@ public class Vehicle {
         return newVehicle;
     }
 
-    /*
-     */
+    public boolean equals(Vehicle other){
+        if (this.route.size() != other.route.size()) return false;
+        for (int i=0; i<this.route.size(); i++){
+            if (!this.route.get(i).equals(other.route.get(i))) return false;
+        }
+        return true;
+    }
+
+    public boolean replaceSuccessful(Vehicle other){
+        return !this.equals(other);
+    }
 
     /*
     Two customers swap inter operator

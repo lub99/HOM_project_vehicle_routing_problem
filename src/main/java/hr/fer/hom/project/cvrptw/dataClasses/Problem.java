@@ -91,7 +91,10 @@ public class Problem {
         CustomerCalc newCustomer = vehicles.get(5).getRoute().get(6);
         System.out.println(newCustomer.printToString());
         CustomerCalc oldCustomer = v.getRoute().get(1);
-        newVehicle = newVehicle.replaceCustomer(oldCustomer, newCustomer);
+        v.print();
+        newVehicle = v.replaceCustomer(oldCustomer, newCustomer);
+        boolean replaced = newVehicle.replaceSuccessful(v);
+        System.out.println(replaced);
         newVehicle.print();
 
         return null;
@@ -269,6 +272,23 @@ public class Problem {
         }
     }
 
-    //public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){}
+    /*
+    U vehicle1 stavljamo customer2 i suprotno
+     */
+    public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){
+        Vehicle[] newVehicles = new Vehicle[2];
+        newVehicles[0] = vehicle1;
+        newVehicles[1] = vehicle2;
+        boolean replaced;
+        Vehicle newVehicle1 = vehicle1.replaceCustomer(customer1, customer2);
+        replaced = newVehicle1.replaceSuccessful(vehicle1);
+        if (!replaced) return newVehicles;
+        Vehicle newVehicle2 = vehicle2.replaceCustomer(customer2, customer1);
+        replaced = newVehicle2.replaceSuccessful(vehicle2);
+        if (!replaced) return newVehicles;
+        newVehicles[0] = newVehicle1;
+        newVehicles[1] = newVehicle2;
+        return newVehicles;
+    }
 
 }
