@@ -5,7 +5,6 @@ import java.util.Objects;
 public class CustomerCalc {
 
     private Customer customer;
-    //private boolean served;
     private Integer arrivalTime;
     private Double positionOnRoute;
 
@@ -15,7 +14,6 @@ public class CustomerCalc {
 
     public CustomerCalc(Customer c, int arrivalTime, double positionOnRoute){
         this.customer = c;
-        //this.served = served;
         this.arrivalTime = arrivalTime;
         this.positionOnRoute = positionOnRoute;
     }
@@ -26,12 +24,7 @@ public class CustomerCalc {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-    /*public boolean isServed() {
-        return served;
-    }
-    public void setServed(boolean served) {
-        this.served = served;
-    }*/
+
     public Integer getArrivalTime() {
         return arrivalTime;
     }

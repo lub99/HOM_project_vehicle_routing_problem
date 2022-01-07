@@ -27,12 +27,6 @@ public class Vehicle {
         this.routeLength = 0.0;
     }
 
-    /*Napraviti metodu checkAddingToEndPossible(Customer)
-     Metoda provjerava da li je moguce dodati korisnika u rutu vozila
-     Potrebno provjeriti ogranicenje kapaciteta vozila u odnosu na zahtjev korisnika
-     te vremensko ogranicenje korisnika
-     */
-
     public Integer getVehicleIndex() {
         return vehicleIndex;
     }
@@ -205,8 +199,20 @@ public class Vehicle {
     }
 
     /*
+    Relocate intra operator
+     */
+    public Vehicle relocateCustomer(CustomerCalc customer, int index){
+        if (customer.getCustomer().getCustomerIndex() == 0) return this;
+        if (index > this.route.size()-1) return this;
+        Vehicle vehicleWithoutCustomer = this.removeFromRoute(customer);
+        Vehicle newVehicle = vehicleWithoutCustomer.insertCustomerAtIndex(customer.getCustomer(), index);
+        boolean vehicleAdded = newVehicle.replaceSuccessful(vehicleWithoutCustomer);
+        if (!vehicleAdded) return this;
+        return newVehicle;
+    }
+
+    /*
     Racunanje centroida od jedne rute
-    Ideja - krizati rute koje imaju bliske centroide
      */
     public int[] calculateRouteCentroid(){
         int[] centroid = new int[2];
@@ -237,6 +243,10 @@ public class Vehicle {
         return newVehicle;
     }
 
+    public boolean replaceSuccessful(Vehicle other){
+        return !this.equals(other);
+    }
+
     public boolean equals(Vehicle other){
         if (this.route.size() != other.route.size()) return false;
         for (int i=0; i<this.route.size(); i++){
@@ -244,16 +254,5 @@ public class Vehicle {
         }
         return true;
     }
-
-    public boolean replaceSuccessful(Vehicle other){
-        return !this.equals(other);
-    }
-
-    /*
-    Two customers swap inter operator
-    Zamjena dva korisnika koji su u razlicitim rutama
-    Uzeti dvije rute koje imaju bliske centroide td je prva ruta random odabrana npr
-     */
-    //public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){}
 
 }

@@ -56,7 +56,6 @@ public class Problem {
 
         Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
 
-
     }
 
     /*
@@ -75,27 +74,6 @@ public class Problem {
          */
     private Solution simulatedAnnealingOptimization(Solution initialSolution) {
         List<Vehicle> vehicles = initialSolution.getVehiclesUsed();
-        /*Vehicle v = vehicles.get(11);
-        v.print();
-        Customer probniKorisnik = this.customers.get(34);
-        Vehicle newVehicle = v.insertCustomerAtIndex(probniKorisnik, 5);
-        newVehicle.print();*/
-
-        Vehicle v = vehicles.get(1);
-        CustomerCalc c1 = v.getRoute().get(7);
-        CustomerCalc c2 = v.getRoute().get(8);
-        Vehicle newVehicle = v.twoCustomersIntraSwap(c1, c2);
-        //Vehicle newVehicle = v.removeFromRoute(c);
-        newVehicle.print();
-
-        CustomerCalc newCustomer = vehicles.get(5).getRoute().get(6);
-        System.out.println(newCustomer.printToString());
-        CustomerCalc oldCustomer = v.getRoute().get(1);
-        v.print();
-        newVehicle = v.replaceCustomer(oldCustomer, newCustomer);
-        boolean replaced = newVehicle.replaceSuccessful(v);
-        System.out.println(replaced);
-        newVehicle.print();
 
         return null;
     }
@@ -194,12 +172,6 @@ public class Problem {
         }
         return bestFound;
     }
-
-    /*
-    Add customer from route with min num of customers to some short route if possible
-      -> za minimizaciju broja vozila
-      -> prebaciti u Problem
-     */
 
     /*
    Metoda sortira korisnike prema udaljenosti od trazenog korisnika
