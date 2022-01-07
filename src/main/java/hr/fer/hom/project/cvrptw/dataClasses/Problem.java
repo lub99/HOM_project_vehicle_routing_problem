@@ -22,14 +22,14 @@ public class Problem {
     private double[][] distances;
     private int vehicleLimit;
     private int vehicleCapacity;
-    //private int vehiclesUsed;
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
     private final int greedyParamForFarthestCustomer = 10;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
     private final int greedyParamForClosestCustomer = 5;
     //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
     private final int initialTemperature = 100;
-    private final int MAX_ITER = 10;
+    private final int finalTemperature = 1;
+    private final int MAX_ITER = 2;
 
     public Problem() {
     }
@@ -38,44 +38,45 @@ public class Problem {
 
         Problem problem = new Problem();
 
-        String instanceFile = args[0]; //"input/instances/i1.txt";
-        String distancesFile = args[1]; //"input/distances/i1.txt";
-        String outputFile = args[2];  //"output/solutions/i1.txt";
-        String outputFileForPython = args[3];  //"output/plotting/i1.txt";
+        String instanceFile = args[0];
+        String distancesFile = args[1];
+        String outputFile = args[2];
+        String outputFileForPython = args[3];
         /*
         String instanceFile = "input/instances/i1.txt";
         String distancesFile = "input/distances/i1.txt";
         String outputFile = "output/solutions/i1.txt";
-        //String outputFileForPython = "output/plotting/i1.txt";
-*/
+        String outputFileForPython = "output/plotting/i1.txt";
+        */
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
         initialSolution.printToFile(outputFile);
         Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
-        Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
+        //Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
+        //System.out.println(optimizedSolution.toString());
 
     }
 
-    /*
-        current_solution = initial_solution;
-        best_solution = current_solution;
-        current_temperature = initial_temperature
-        while(!termination_criterion){ //broj iteracija
-             new_solution = select neighbor -> primijeniti niz operatora
-             if (f(new_solution) < f(current_solution)) current_solution = new_solution
-             else if (f(new_solution) >= f(current_solution)) and (rand(0,1) < Math.pow(e, -df/current_temperature)
-                  current_solution = new_solution
-             if (f(current_solution) < f(best_solution)) best_solution = current_solution
-             update current_temperature
-        }
-        return best_solution;
-         */
     private Solution simulatedAnnealingOptimization(Solution initialSolution) {
-        List<Vehicle> vehicles = initialSolution.getVehiclesUsed();
-
-        return null;
+        Solution currentSolution = initialSolution.copy();
+        Solution bestSolution = initialSolution.copy();
+        double currentTemperature = initialTemperature;
+        int iter = 0;
+        while(iter < MAX_ITER || currentTemperature > finalTemperature){
+            Solution newSolution = null; //selectNeighbor(currentSolution);
+            if (currentSolution.checkIfNewSolutionIsBetter(newSolution)){
+                currentSolution = newSolution.copy();
+            }else if(checkTemperatureCondition(currentSolution, newSolution, currentTemperature)){
+                currentSolution = newSolution.copy();
+            }
+            if (bestSolution.checkIfNewSolutionIsBetter(currentSolution)){
+                bestSolution = currentSolution.copy();
+            }
+            currentTemperature *= 0.98;  //ili nesto drugo
+        }
+        return bestSolution;
     }
 
     private Solution greedyAlg() {
@@ -185,6 +186,12 @@ public class Problem {
                 .mapToInt(ele -> ele).boxed().collect(Collectors.toList());
         sortedIndices.remove(0);
         return sortedIndices.stream().mapToInt(i -> i).toArray();
+    }
+
+    private boolean checkTemperatureCondition(Solution currentSolution, Solution newSolution, double temp) {
+        double df = currentSolution.getTotalDistance() - newSolution.getTotalDistance();
+        double num = Math.exp(df / temp);
+        return Math.random() < num;
     }
 
     private void importData(String instance) {

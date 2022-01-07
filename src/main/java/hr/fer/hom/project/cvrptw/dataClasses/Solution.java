@@ -3,6 +3,7 @@ package hr.fer.hom.project.cvrptw.dataClasses;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,17 +16,15 @@ import java.util.stream.Collectors;
 public class Solution {
 
     private Double totalDistance;
-    //private int vehiclesUsedCount;
     private List<Vehicle> vehiclesUsed;
-    private boolean feasible;
+    //private boolean feasible;
 
     public Solution() {
     }
 
-    public Solution(int totalDistance, List<Vehicle> vehiclesUsed) {
-        this.totalDistance = (double) totalDistance;
+    public Solution(List<Vehicle> vehiclesUsed) {
         this.vehiclesUsed = vehiclesUsed;
-        //this.vehiclesUsedCount = vehiclesUsed.size();
+        this.totalDistance = this.getTotalDistance();
     }
 
     public Double getTotalDistance() {
@@ -44,9 +43,7 @@ public class Solution {
         return vehiclesUsed.size();
     }
 
-    public boolean getFeasible() {
-        return feasible;
-    }
+    //public boolean getFeasible() {return feasible;}
 
     public void setTotalDistance(Double distance) {
         this.totalDistance = distance;
@@ -56,9 +53,7 @@ public class Solution {
         this.vehiclesUsed = vehicles;
     }
 
-    public void setFeasible(boolean feasible) {
-        this.feasible = feasible;
-    }
+    //public void setFeasible(boolean feasible) { this.feasible = feasible;}
 
     @Override
     public String toString() {
@@ -88,6 +83,14 @@ public class Solution {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public Solution copy(){
+        return new Solution(new ArrayList<>(this.getVehiclesUsed()));
+    }
+
+    public boolean checkIfNewSolutionIsBetter(Solution newSolution){
+        return newSolution.getVehiclesUsedCount() < this.getVehiclesUsedCount()
+                || (newSolution.getTotalDistance() < this.getTotalDistance());
     }
 }
