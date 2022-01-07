@@ -39,10 +39,6 @@ public class Problem {
         String distancesFile = args[1]; // args[1];
         String outputFile = args[2]; // args[2];
         String outputFileForPython = args[3];  //"output/plotting/i1.txt"
-        String instanceFile = args[0]; //"input/instances/i1.txt";
-        String distancesFile = args[1]; //"input/distances/i1.txt";
-        String outputFile = args[2];  //"output/solutions/i1.txt";
-        String outputFileForPython = args[3];  //"output/plotting/i1.txt";
 
         /*String instanceFile = "input/instances/i1.txt";
         String distancesFile = "input/distances/i1.txt";
