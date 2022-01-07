@@ -36,6 +36,7 @@ if __name__ == '__main__':
             ax = plt.gca()
             ax.set_xlim([0, 80])
             ax.set_ylim([0, 80])
+            plt.savefig('analytical_output/' + str(len(allPreviousGraphs) + 1) + ".png")
             plt.show()
 
             fig = plt.figure()
