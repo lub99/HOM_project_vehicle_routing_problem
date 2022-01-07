@@ -81,9 +81,11 @@ public class Problem {
         Vehicle newVehicle = v.insertCustomerAtIndex(probniKorisnik, 5);
         newVehicle.print();*/
 
-        Vehicle v = vehicles.get(12);
-        CustomerCalc c = v.getRoute().get(5);
-        Vehicle newVehicle = v.removeFromRoute(c);
+        Vehicle v = vehicles.get(1);
+        CustomerCalc c1 = v.getRoute().get(7);
+        CustomerCalc c2 = v.getRoute().get(8);
+        Vehicle newVehicle = v.twoCustomersIntraSwap(c1, c2);
+        //Vehicle newVehicle = v.removeFromRoute(c);
         newVehicle.print();
 
         return null;

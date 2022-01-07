@@ -65,7 +65,6 @@ public class Customer {
 
     public void setServed(boolean condition) { this.served = condition;}
 
-
    /* @Override
     public boolean equals(Object o) {
         if (this == o) return true;

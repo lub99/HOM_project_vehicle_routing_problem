@@ -180,13 +180,37 @@ public class Vehicle {
     Two customers swap intra operator -> za minimizaciju duljine rute
     Zamjena dva random korisnika u ruti -> azurirati sve potrebne info
      */
-    public Vehicle twoCustomersIntraSwap(Customer customer1, Customer customer2){
-        return null;
+    public Vehicle twoCustomersIntraSwap(CustomerCalc customer1, CustomerCalc customer2){
+        if (customer1.getCustomer().getCustomerIndex() == 0) return this;
+        if (customer2.getCustomer().getCustomerIndex() == 0) return this;
+        Vehicle newVehicle = new Vehicle(this.vehicleIndex, this.capacityLimit, this.getDepot(), this.distances);
+        int[] addingPossible;
+        for (int i=1; i<this.route.size(); i++){
+            CustomerCalc currentCustomer = this.route.get(i);
+            if (currentCustomer.equals(customer1)){
+                addingPossible = newVehicle.checkIfCustomerCanBeAddedToEnd(customer2.getCustomer());
+                if (addingPossible[0] == 0) return this;
+                newVehicle.addCustomerToEnd(customer2.getCustomer());
+            }else if(currentCustomer.equals(customer2)){
+                addingPossible = newVehicle.checkIfCustomerCanBeAddedToEnd(customer1.getCustomer());
+                if (addingPossible[0] == 0) return this;
+                newVehicle.addCustomerToEnd(customer1.getCustomer());
+            }else{
+                addingPossible = newVehicle.checkIfCustomerCanBeAddedToEnd(currentCustomer.getCustomer());
+                if (addingPossible[0] == 0) return this;
+                newVehicle.addCustomerToEnd(currentCustomer.getCustomer());
+            }
+        }
+        return newVehicle;
     }
 
     /*
     Racunanje centroida od jedne rute
+    Ideja - krizati rute koje imaju bliske centroide
      */
+    /*public int[] calculateRouteCentroid(){
+        int[] centroid =
+    }*/
 
 
     /*

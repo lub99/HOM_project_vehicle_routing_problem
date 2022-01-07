@@ -1,5 +1,7 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
+import java.util.Objects;
+
 public class CustomerCalc {
 
     private Customer customer;
@@ -44,5 +46,15 @@ public class CustomerCalc {
     }
     public String printToString() {
         return customer.getCustomerIndex() + "(" + arrivalTime + ")";
+    }
+
+     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerCalc customer = (CustomerCalc) o;
+        return Objects.equals(((CustomerCalc) o).getCustomer().getCustomerIndex(),
+                customer.getCustomer().getCustomerIndex())
+                && Objects.equals(arrivalTime, customer.arrivalTime);
     }
 }
