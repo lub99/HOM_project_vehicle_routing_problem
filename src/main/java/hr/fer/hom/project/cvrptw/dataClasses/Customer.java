@@ -11,8 +11,6 @@ public class Customer {
     private Integer dueDate;
     private Integer serviceTime;
     private boolean served;
-    //private Integer arrivalTime;
-    //private Double positionOnRoute;
 
     public Customer(int customerIndex, int x, int y, int demand,
                     int readyTime, int dueDate, int serviceTime) {
@@ -23,7 +21,6 @@ public class Customer {
         this.readyTime = readyTime;
         this.dueDate = dueDate;
         this.serviceTime = serviceTime;
-        //this.served = false;
     }
 
     public Customer(int[] data) {
@@ -68,15 +65,6 @@ public class Customer {
 
     public void setServed(boolean condition) { this.served = condition;}
 
-    //public Integer getArrivalTime() { return arrivalTime; }
-
-    //public Double getPositionOnRoute() {return positionOnRoute;}
-
-    //public void setArrivalTime(int time) { this.arrivalTime = time;}
-
-    //public void setPositionOnRoute(double position) { this.positionOnRoute = position; }
-
-    //public String printToString() { return customerIndex + "(" + arrivalTime + ")";}
 
    /* @Override
     public boolean equals(Object o) {

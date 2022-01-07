@@ -140,7 +140,7 @@ public class Vehicle {
     Prihvacaju se indexi od 1 do duljine rute?
      */
     public Vehicle insertCustomerAtIndex(Customer customer, int index){
-        if (index > this.getNumberOfCustomersInRoute()) return null;
+        if (index > this.getNumberOfCustomersInRoute()) return this;
         int[] addingPossible;
         Vehicle newVehicle = new Vehicle(this.vehicleIndex, this.capacityLimit, this.getDepot(), this.distances);
         for (int i=1; i<=this.route.size(); i++){
@@ -148,13 +148,30 @@ public class Vehicle {
                 newVehicle.addCustomerToEnd(this.route.get(i).getCustomer());
             }else if (i == index){  //dodaj novog korisnika
                 addingPossible = newVehicle.checkIfCustomerCanBeAddedToEnd(customer);
-                if (addingPossible[0] == 0) return null;
+                if (addingPossible[0] == 0) return this;
                 newVehicle.addCustomerToEnd(customer);
             }else{  //dodaj ostale korisnike
                 addingPossible = newVehicle.checkIfCustomerCanBeAddedToEnd(this.route.get(i-1).getCustomer());
-                if (addingPossible[0] == 0) return null;
+                if (addingPossible[0] == 0) return this;
                 newVehicle.addCustomerToEnd(this.route.get(i-1).getCustomer());
             }
+        }
+        return newVehicle;
+    }
+
+    /*
+    Remove customer from route
+    Metoda prima CustomerCalc objekt i brise ga iz rute
+    Svi korisnici nakon izbrisanog korisnika moraju se azurirati
+    Vracamo novo vozilo
+     */
+    public Vehicle removeFromRoute(CustomerCalc customer){
+        if (customer.getCustomer().getCustomerIndex() == 0) return this; //pokusaj brisanja skladista, nista ne radimo
+        Vehicle newVehicle = new Vehicle(this.vehicleIndex, this.capacityLimit, this.getDepot(), this.distances);
+        for (int i=1; i<this.route.size(); i++){
+            CustomerCalc currentCustomer = this.route.get(i);
+            if (currentCustomer.getCustomer().getCustomerIndex() == customer.getCustomer().getCustomerIndex()) continue;
+            newVehicle.addCustomerToEnd(currentCustomer.getCustomer());
         }
         return newVehicle;
     }

@@ -81,6 +81,11 @@ public class Problem {
         Vehicle newVehicle = v.insertCustomerAtIndex(probniKorisnik, 5);
         newVehicle.print();*/
 
+        Vehicle v = vehicles.get(12);
+        CustomerCalc c = v.getRoute().get(5);
+        Vehicle newVehicle = v.removeFromRoute(c);
+        newVehicle.print();
+
         return null;
     }
 
