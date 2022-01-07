@@ -33,15 +33,15 @@ public class Problem {
 
         Problem problem = new Problem();
 
-        String instanceFile = args[0];
-        String distancesFile = args[1];
-        String outputFile = args[2];
-        String outputFileForPython = args[3];
+        String instanceFile = "input/instances/i1.txt";  //args[0]
+        String distancesFile = "input/distances/i1.txt"; // args[1];
+        String outputFile = "output/i1.txt"; // args[2];
+        //String outputFileForPython = args[3];
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
         initialSolution.printToFile(outputFile);
-        Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
+        //Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
     }
 
@@ -107,7 +107,10 @@ public class Problem {
         Customer bestFound = null;
         int minTimeToDueDateOfFeasibleSolution = Integer.MAX_VALUE;
         for (Customer customer : candidateCustomers) {
-            int diff = customer.getDueDate() - vehicle.getRouteTime();
+            int potentialArrivalToNextCustomer = vehicle.calculateServedTimeOfNextCustomer(
+                    previousCustomer, customer, this.distances);
+            int diff = customer.getDueDate() - potentialArrivalToNextCustomer;
+            //int diff = customer.getDueDate() - vehicle.getRouteTime();  //krivo
             if (diff <= 0) continue;
             int potentialServedTimeOfNextCustomer = vehicle.calculateServedTimeOfNextCustomer(
                     previousCustomer, customer, this.distances);
@@ -176,6 +179,7 @@ public class Problem {
                 Customer c = new Customer(customerData);
                 if (row_num == 0) {
                     c.setServedTime(0);
+                    c.setServed(true);
                     c.setPositionOnRoute(0.0);
                     this.depot = c;
                 } else {

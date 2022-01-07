@@ -78,8 +78,9 @@ public class Vehicle {
 
     public int calculateServedTimeOfNextCustomer(Customer previousCustomer,
                                                  Customer nextCustomer, double[][] distances){
-        return previousCustomer.getServedTime() + previousCustomer.getServiceTime()
-                + (int)(distances[previousCustomer.getCustomerIndex()][nextCustomer.getCustomerIndex()]+1);
+        return Math.max(nextCustomer.getReadyTime(), previousCustomer.getServedTime()
+                + previousCustomer.getServiceTime()
+                + (int)(distances[previousCustomer.getCustomerIndex()][nextCustomer.getCustomerIndex()]+1));
     }
 
     public void returnToGarage(double[][] distances) {

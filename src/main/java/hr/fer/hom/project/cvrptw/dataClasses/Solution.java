@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class Solution {
 
     private Double totalDistance;
-    private Integer totalTime;
+    //private Integer totalTime;
     //private int vehiclesUsedCount;
     private List<Vehicle> vehiclesUsed;
     private boolean feasible;
@@ -23,9 +23,9 @@ public class Solution {
     public Solution() {
     }
 
-    public Solution(int totalDistance, int totalTime, List<Vehicle> vehiclesUsed) {
+    public Solution(int totalDistance, List<Vehicle> vehiclesUsed) {  //
         this.totalDistance = (double) totalDistance;
-        this.totalTime = totalTime;
+        //this.totalTime = totalTime;
         this.vehiclesUsed = vehiclesUsed;
         //this.vehiclesUsedCount = vehiclesUsed.size();
     }
@@ -39,14 +39,14 @@ public class Solution {
         }
     }
 
-    public Integer getTotalTime() {
+    /*public Integer getTotalTime() {
         if (totalTime != null) {
             return totalTime;
         } else {
             // calc total time
             return null;
         }
-    }
+    }*/
 
     public List<Vehicle> getVehiclesUsed() {
         return vehiclesUsed;
@@ -64,9 +64,9 @@ public class Solution {
         this.totalDistance = distance;
     }
 
-    public void setTotalTime(int time) {
+    /*public void setTotalTime(int time) {
         this.totalTime = time;
-    }
+    }*/
 
     public void setVehiclesUsed(List<Vehicle> vehicles) {
         this.vehiclesUsed = vehicles;
@@ -75,13 +75,6 @@ public class Solution {
     public void setFeasible(boolean feasible) {
         this.feasible = feasible;
     }
-
-    /*
-    Dodati ispis rjesenja kao u pdf-u projekta
-    - ispis broja vozila
-    - iterirati po vozilima, ispisati indeks vozila, indeks korisnika i njegov servedTime
-    - ispisati totalDistance rjesenja
-     */
 
     @Override
     public String toString() {
