@@ -182,4 +182,9 @@ public class Vehicle {
     /*
     ...druge ideje
      */
+
+
+    public boolean onlyDepotsInRoute(){
+        return false;
+    }
 }
