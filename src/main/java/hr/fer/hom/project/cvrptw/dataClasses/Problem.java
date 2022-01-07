@@ -17,6 +17,7 @@ public class Problem {
 
     private int customerCount;
     private List<Customer> customers;
+    private List<CustomerCalc> customersCalcs;
     private Customer depot; //-> takoder prvi korisnik u gornjoj listi
     private double[][] distances;
     private int vehicleLimit;
@@ -38,6 +39,16 @@ public class Problem {
         String distancesFile = args[1]; // args[1];
         String outputFile = args[2]; // args[2];
         String outputFileForPython = args[3];  //"output/plotting/i1.txt"
+        String instanceFile = args[0]; //"input/instances/i1.txt";
+        String distancesFile = args[1]; //"input/distances/i1.txt";
+        String outputFile = args[2];  //"output/solutions/i1.txt";
+        String outputFileForPython = args[3];  //"output/plotting/i1.txt";
+
+        /*String instanceFile = "input/instances/i1.txt";
+        String distancesFile = "input/distances/i1.txt";
+        String outputFile = "output/solutions/i1.txt";
+        String outputFileForPython = "output/plotting/i1.txt";
+        */
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
@@ -72,8 +83,6 @@ public class Problem {
             }
             vehicle.returnToGarage(this.distances);
             this.vehicles.add(vehicle);
-            this.depot.setPositionOnRoute(0.0);
-            this.depot.setArrivalTime(0);
             vehicleIndex++;
         }
         if (unservedCustomersCount > 0) {
@@ -105,7 +114,7 @@ public class Problem {
             }
             if (unservedCustomersFound > this.greedyParamForClosestCustomer) break;
         }
-        Customer previousCustomer = vehicle.getLastCustomerInRoute();
+        CustomerCalc previousCustomer = vehicle.getLastCustomerCalcInRoute();
         Customer bestFound = null;
         int minTimeToDueDateOfFeasibleSolution = Integer.MAX_VALUE;
         for (Customer customer : candidateCustomers) {
@@ -122,20 +131,6 @@ public class Problem {
             }
         }
         return bestFound;
-    }
-
-    /*
-    Metoda sortira korisnike prema udaljenosti od trazenog korisnika
-    Vraca se polje indeksa korisnika
-     */
-    private int[] sortCustomerIndexesByDistance(Customer startingCustomer) {
-        int startIndex = startingCustomer.getCustomerIndex();
-        List<Integer> sortedIndices = IntStream.range(0, this.distances[startIndex].length)
-                .boxed().sorted((i, j) -> (Double.valueOf(this.distances[startIndex][i]))
-                        .compareTo(this.distances[startIndex][j]))
-                .mapToInt(ele -> ele).boxed().collect(Collectors.toList());
-        sortedIndices.remove(0);
-        return sortedIndices.stream().mapToInt(i -> i).toArray();
     }
 
     /*
@@ -164,8 +159,23 @@ public class Problem {
         return bestFound;
     }
 
+    /*
+   Metoda sortira korisnike prema udaljenosti od trazenog korisnika
+   Vraca se polje indeksa korisnika
+    */
+    private int[] sortCustomerIndexesByDistance(Customer startingCustomer) {
+        int startIndex = startingCustomer.getCustomerIndex();
+        List<Integer> sortedIndices = IntStream.range(0, this.distances[startIndex].length)
+                .boxed().sorted((i, j) -> (Double.valueOf(this.distances[startIndex][i]))
+                        .compareTo(this.distances[startIndex][j]))
+                .mapToInt(ele -> ele).boxed().collect(Collectors.toList());
+        sortedIndices.remove(0);
+        return sortedIndices.stream().mapToInt(i -> i).toArray();
+    }
+
     private void importData(String instance) {
         this.customers = new ArrayList<>();
+        this.customersCalcs = new ArrayList<>();
         this.unservedCustomerIndexes = new ArrayList<>();
         try {
             Path path = Paths.get(instance);
@@ -184,15 +194,15 @@ public class Problem {
             while (row != null) {
                 customerData = Arrays.stream(row.strip().split("\\s+")).mapToInt(Integer::parseInt).toArray();
                 Customer c = new Customer(customerData);
+                CustomerCalc cCalc = new CustomerCalc(c);
                 if (row_num == 0) {
-                    c.setArrivalTime(0);
                     c.setServed(true);
-                    c.setPositionOnRoute(0.0);
                     this.depot = c;
                 } else {
                     this.unservedCustomerIndexes.add(c.getCustomerIndex());
                 }
                 this.customers.add(c);
+                this.customersCalcs.add(cCalc);
                 row = reader.readLine();
                 row_num++;
             }

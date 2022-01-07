@@ -11,8 +11,8 @@ public class Customer {
     private Integer dueDate;
     private Integer serviceTime;
     private boolean served;
-    private Integer arrivalTime;
-    private Double positionOnRoute;
+    //private Integer arrivalTime;
+    //private Double positionOnRoute;
 
     public Customer(int customerIndex, int x, int y, int demand,
                     int readyTime, int dueDate, int serviceTime) {
@@ -23,7 +23,7 @@ public class Customer {
         this.readyTime = readyTime;
         this.dueDate = dueDate;
         this.serviceTime = serviceTime;
-        this.served = false;
+        //this.served = false;
     }
 
     public Customer(int[] data) {
@@ -64,49 +64,35 @@ public class Customer {
         return serviceTime;
     }
 
-    public boolean isServed() {
-        return served;
-    }
+    public boolean isServed() { return served; }
 
-    public Integer getArrivalTime() {
-        return arrivalTime;
-    }
+    public void setServed(boolean condition) { this.served = condition;}
 
-    public Double getPositionOnRoute() {
-        return positionOnRoute;
-    }
+    //public Integer getArrivalTime() { return arrivalTime; }
 
-    public void setServed(boolean condition) {
-        this.served = condition;
-    }
+    //public Double getPositionOnRoute() {return positionOnRoute;}
 
-    public void setArrivalTime(int time) {
-        this.arrivalTime = time;
-    }
+    //public void setArrivalTime(int time) { this.arrivalTime = time;}
 
-    public void setPositionOnRoute(double position) {
-        this.positionOnRoute = position;
-    }
+    //public void setPositionOnRoute(double position) { this.positionOnRoute = position; }
 
-    public String printToString() {
-        return customerIndex + "(" + arrivalTime + ")";
-    }
+    //public String printToString() { return customerIndex + "(" + arrivalTime + ")";}
 
-    @Override
+   /* @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
         return Objects.equals(customerIndex, customer.customerIndex)
                 && Objects.equals(arrivalTime, customer.arrivalTime);
-    }
+    }*/
 
-    @Override
+   /* @Override
     public int hashCode() {
         return Objects.hash(customerIndex, arrivalTime);
-    }
+    }*/
 
-    public Customer copy() {
+    /*public Customer copy() {
         var copyCustomer = new Customer(
                 customerIndex,
                 xCoordinate,
@@ -119,5 +105,5 @@ public class Customer {
         copyCustomer.setArrivalTime(arrivalTime);
         copyCustomer.setPositionOnRoute(positionOnRoute);
         return copyCustomer;
-    }
+    }*/
 }

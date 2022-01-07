@@ -69,7 +69,7 @@ public class Solution {
         for (var vehicle : vehiclesUsed) {
             var oneRoute = vehicle.getRoute()
                     .stream()
-                    .map(Customer::printToString)
+                    .map(CustomerCalc::printToString)
                     .collect(Collectors.joining("->"));
             stringBuilder.append(index).append(": ").append(oneRoute).append("\n");
             index++;

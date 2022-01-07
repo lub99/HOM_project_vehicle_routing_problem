@@ -20,7 +20,7 @@ public class Util {
         for (var vehicle : vehiclesUsed) {
             var oneRoute = vehicle.getRoute()
                     .stream()
-                    .map(customer -> String.valueOf(customer.getCustomerIndex()))
+                    .map(customer -> String.valueOf(customer.getCustomer().getCustomerIndex()))
                     .collect(Collectors.joining(","));
             stringBuilder.append(oneRoute).append("\n");
         }
