@@ -25,8 +25,8 @@ public class Problem {
     //private int vehiclesUsed;
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
-    private final int greedyParamForFarthestCustomer = 10;
-    private final int greedyParamForClosestCustomer = 3;
+    private final int greedyParamForFarthestCustomer = 10;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
+    private final int greedyParamForClosestCustomer = 5;
 
     public Problem() {
     }
@@ -35,16 +35,16 @@ public class Problem {
 
         Problem problem = new Problem();
 
-        String instanceFile = args[0];  //args[0]
-        String distancesFile = args[1]; // args[1];
-        String outputFile = args[2]; // args[2];
-        String outputFileForPython = args[3];  //"output/plotting/i1.txt"
-
-        /*String instanceFile = "input/instances/i1.txt";
+        String instanceFile = args[0]; //"input/instances/i1.txt";
+        String distancesFile = args[1]; //"input/distances/i1.txt";
+        String outputFile = args[2];  //"output/solutions/i1.txt";
+        String outputFileForPython = args[3];  //"output/plotting/i1.txt";
+        /*
+        String instanceFile = "input/instances/i1.txt";
         String distancesFile = "input/distances/i1.txt";
         String outputFile = "output/solutions/i1.txt";
-        String outputFileForPython = "output/plotting/i1.txt";
-        */
+        //String outputFileForPython = "output/plotting/i1.txt";
+*/
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
@@ -60,7 +60,7 @@ public class Problem {
         int vehicleIndex = 0;
         int[] sortedCustomerIndexesFromDepot = sortCustomerIndexesByDistance(depot);
         while (unservedCustomersCount > 0 && this.vehicles.size() < this.vehicleLimit) {
-            Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, this.depot);
+            Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, this.depot, this.distances);
             boolean vehicleInDepot = true;
             Customer nextCustomer, lastCustomer = null;
             while (true) {
@@ -74,20 +74,25 @@ public class Problem {
                 if (nextCustomer == null) break;
                 this.unservedCustomerIndexes.remove(nextCustomer.getCustomerIndex());
                 unservedCustomersCount--;
-                vehicle.addCustomerToEnd(nextCustomer, this.distances);
+                vehicle.addCustomerToEnd(nextCustomer);
                 lastCustomer = nextCustomer;
             }
-            vehicle.returnToGarage(this.distances);
+            vehicle.returnToGarage();
             this.vehicles.add(vehicle);
             vehicleIndex++;
         }
         if (unservedCustomersCount > 0) {
-            System.out.println("Infeasible solution");
-            solution.setFeasible(false);
-            return solution;
+            System.out.println("Infeasible solution, unserved customers exist");
         }
         solution.setVehiclesUsed(vehicles);
         System.out.println(solution);
+
+        /*Vehicle v = this.vehicles.get(11);
+        v.print();
+        Customer probniKorisnik = this.customers.get(34);
+        Vehicle newVehicle = v.insertCustomerAtIndex(probniKorisnik, 5);
+        newVehicle.print();*/
+
         return solution;
     }
 
@@ -110,19 +115,13 @@ public class Problem {
             }
             if (unservedCustomersFound > this.greedyParamForClosestCustomer) break;
         }
-        CustomerCalc previousCustomer = vehicle.getLastCustomerCalcInRoute();
         Customer bestFound = null;
         int minTimeToDueDateOfFeasibleSolution = Integer.MAX_VALUE;
         for (Customer customer : candidateCustomers) {
-            int potentialArrivalToNextCustomer = vehicle.calculateArrivalTimeToNextCustomer(
-                    previousCustomer, customer, this.distances);
-            int diff = customer.getDueDate() - potentialArrivalToNextCustomer;
-            if (diff <= 0) continue;
-            int timeOfReturnToDepot = potentialArrivalToNextCustomer + customer.getServiceTime()
-                    + (int) (distances[customer.getCustomerIndex()][depot.getCustomerIndex()] + 1);
-            if (timeOfReturnToDepot > depot.getDueDate()) continue;
-            if (diff < minTimeToDueDateOfFeasibleSolution) {
-                minTimeToDueDateOfFeasibleSolution = diff;
+            int[] returnStatement = vehicle.checkIfCustomerCanBeAddedToEnd(customer);
+            if (returnStatement[0] == 0) continue;
+            if (returnStatement[1] < minTimeToDueDateOfFeasibleSolution) {
+                minTimeToDueDateOfFeasibleSolution = returnStatement[1];
                 bestFound = customer;
             }
         }
