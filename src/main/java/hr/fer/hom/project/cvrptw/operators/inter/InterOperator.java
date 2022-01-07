@@ -4,5 +4,5 @@ import hr.fer.hom.project.cvrptw.dataClasses.Vehicle;
 
 public interface InterOperator {
 
-    Vehicle interCross(Vehicle first, Vehicle second);
+    Vehicle[] interCross(Vehicle first, Vehicle second);
 }

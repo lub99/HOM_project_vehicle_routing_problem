@@ -4,5 +4,5 @@ import hr.fer.hom.project.cvrptw.dataClasses.Vehicle;
 
 public interface IntraOperator {
 
-    public Vehicle intraCross(Vehicle vehicle);
+    Vehicle intraCross(Vehicle vehicle);
 }
