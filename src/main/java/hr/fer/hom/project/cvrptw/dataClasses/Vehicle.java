@@ -64,8 +64,8 @@ public class Vehicle {
         this.route.add(c);
         this.remainingCapacity -= c.getDemand();
         this.setRouteLength(calculateRoutePositionOfNextCustomer(lastCustomer, c, distances));
-        this.setRouteTime(calculateServedTimeOfNextCustomer(lastCustomer, c, distances));
-        c.setServedTime(this.getRouteTime());
+        this.setRouteTime(calculateArrivalTimeToNextCustomer(lastCustomer, c, distances));
+        c.setArrivalTime(this.getRouteTime());
         c.setPositionOnRoute(this.getRouteLength());
         c.setServed(true);
     }
@@ -76,9 +76,9 @@ public class Vehicle {
                 + distances[previousCustomer.getCustomerIndex()][nextCustomer.getCustomerIndex()];
     }
 
-    public int calculateServedTimeOfNextCustomer(Customer previousCustomer,
+    public int calculateArrivalTimeToNextCustomer(Customer previousCustomer,
                                                  Customer nextCustomer, double[][] distances){
-        return Math.max(nextCustomer.getReadyTime(), previousCustomer.getServedTime()
+        return Math.max(nextCustomer.getReadyTime(), previousCustomer.getArrivalTime()
                 + previousCustomer.getServiceTime()
                 + (int)(distances[previousCustomer.getCustomerIndex()][nextCustomer.getCustomerIndex()]+1));
     }

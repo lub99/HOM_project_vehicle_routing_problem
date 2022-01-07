@@ -11,7 +11,7 @@ public class Customer {
     private Integer dueDate;
     private Integer serviceTime;
     private boolean served;
-    private Integer servedTime;
+    private Integer arrivalTime;
     private Double positionOnRoute;
 
     public Customer(int customerIndex, int x, int y, int demand,
@@ -68,8 +68,8 @@ public class Customer {
         return served;
     }
 
-    public Integer getServedTime() {
-        return servedTime;
+    public Integer getArrivalTime() {
+        return arrivalTime;
     }
 
     public Double getPositionOnRoute() {
@@ -80,8 +80,8 @@ public class Customer {
         this.served = condition;
     }
 
-    public void setServedTime(int time) {
-        this.servedTime = time;
+    public void setArrivalTime(int time) {
+        this.arrivalTime = time;
     }
 
     public void setPositionOnRoute(double position) {
@@ -89,7 +89,7 @@ public class Customer {
     }
 
     public String printToString() {
-        return customerIndex + "(" + servedTime + ")";
+        return customerIndex + "(" + arrivalTime + ")";
     }
 
     @Override
@@ -97,12 +97,13 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(customerIndex, customer.customerIndex) && Objects.equals(servedTime, customer.servedTime);
+        return Objects.equals(customerIndex, customer.customerIndex)
+                && Objects.equals(arrivalTime, customer.arrivalTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerIndex, servedTime);
+        return Objects.hash(customerIndex, arrivalTime);
     }
 
     public Customer copy() {
@@ -115,7 +116,7 @@ public class Customer {
                 dueDate,
                 serviceTime);
         copyCustomer.setServed(served);
-        copyCustomer.setServedTime(servedTime);
+        copyCustomer.setArrivalTime(arrivalTime);
         copyCustomer.setPositionOnRoute(positionOnRoute);
         return copyCustomer;
     }

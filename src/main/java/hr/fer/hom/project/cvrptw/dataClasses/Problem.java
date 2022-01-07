@@ -24,7 +24,8 @@ public class Problem {
     //private int vehiclesUsed;
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
-    private final int greedyHeuristicParam = 5;
+    private final int greedyParamForFarthestCustomer = 10;
+    private final int greedyParamForClosestCustomer = 3;
 
     public Problem() {
     }
@@ -35,8 +36,8 @@ public class Problem {
 
         String instanceFile = "input/instances/i1.txt";  //args[0]
         String distancesFile = "input/distances/i1.txt"; // args[1];
-        String outputFile = "output/i1.txt"; // args[2];
-        //String outputFileForPython = args[3];
+        String outputFile = "output/solutions/i1.txt"; // args[2];
+        //String outputFileForPython = args[3];  //"output/plotting/i1.txt"
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
         Solution initialSolution = problem.greedyAlg();
@@ -50,13 +51,14 @@ public class Problem {
         int unservedCustomersCount = this.unservedCustomerIndexes.size();
         this.vehicles = new ArrayList<>();
         int vehicleIndex = 0;
+        int[] sortedCustomerIndexesFromDepot = sortCustomerIndexesByDistance(depot);
         while (unservedCustomersCount > 0 && this.vehicles.size() < this.vehicleLimit) {
             Vehicle vehicle = new Vehicle(vehicleIndex, this.vehicleCapacity, this.depot);
             boolean vehicleInDepot = true;
             Customer nextCustomer, lastCustomer = null;
             while (true) {
                 if (vehicleInDepot) {
-                    nextCustomer = findFarthestUnservedCustomerFromDepot();
+                    nextCustomer = findBestFirstCustomerFromDepot(sortedCustomerIndexesFromDepot);
                     vehicleInDepot = false;
                 } else {
                     int[] sortedIndexes = sortCustomerIndexesByDistance(lastCustomer);
@@ -71,7 +73,7 @@ public class Problem {
             vehicle.returnToGarage(this.distances);
             this.vehicles.add(vehicle);
             this.depot.setPositionOnRoute(0.0);
-            this.depot.setServedTime(0);
+            this.depot.setArrivalTime(0);
             vehicleIndex++;
         }
         if (unservedCustomersCount > 0) {
@@ -101,20 +103,17 @@ public class Problem {
                 candidateCustomers.add(customer);
                 unservedCustomersFound++;
             }
-            if (unservedCustomersFound > this.greedyHeuristicParam) break;
+            if (unservedCustomersFound > this.greedyParamForClosestCustomer) break;
         }
         Customer previousCustomer = vehicle.getLastCustomerInRoute();
         Customer bestFound = null;
         int minTimeToDueDateOfFeasibleSolution = Integer.MAX_VALUE;
         for (Customer customer : candidateCustomers) {
-            int potentialArrivalToNextCustomer = vehicle.calculateServedTimeOfNextCustomer(
+            int potentialArrivalToNextCustomer = vehicle.calculateArrivalTimeToNextCustomer(
                     previousCustomer, customer, this.distances);
             int diff = customer.getDueDate() - potentialArrivalToNextCustomer;
-            //int diff = customer.getDueDate() - vehicle.getRouteTime();  //krivo
             if (diff <= 0) continue;
-            int potentialServedTimeOfNextCustomer = vehicle.calculateServedTimeOfNextCustomer(
-                    previousCustomer, customer, this.distances);
-            int timeOfReturnToDepot = potentialServedTimeOfNextCustomer + customer.getServiceTime()
+            int timeOfReturnToDepot = potentialArrivalToNextCustomer + customer.getServiceTime()
                     + (int) (distances[customer.getCustomerIndex()][depot.getCustomerIndex()] + 1);
             if (timeOfReturnToDepot > depot.getDueDate()) continue;
             if (diff < minTimeToDueDateOfFeasibleSolution) {
@@ -141,20 +140,28 @@ public class Problem {
 
     /*
     Metoda trazi najdaljeg korisnika od skladista ovisno o trenutno neposluzenim korisnicima
+    s minimalnim ready timeom
      */
-    private Customer findFarthestUnservedCustomerFromDepot() {
-        double maxDistance = 0;
-        double distance;
-        int farthestCustomerIndex = 0;
-        int unservedCustomersCount = this.unservedCustomerIndexes.size();
-        for (int i = 0; i < unservedCustomersCount; i++) {
-            distance = this.distances[0][this.unservedCustomerIndexes.get(i)];
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                farthestCustomerIndex = this.unservedCustomerIndexes.get(i);
+    private Customer findBestFirstCustomerFromDepot(int[] sortedIndexes) {
+        int unservedCustomersFound = 0;
+        List<Customer> candidateCustomers = new ArrayList<>();
+        for (int i = sortedIndexes.length-1; i >=0; i--) {
+            Customer customer = this.customers.get(sortedIndexes[i]);
+            if (!customer.isServed()) {
+                candidateCustomers.add(customer);
+                unservedCustomersFound++;
+            }
+            if (unservedCustomersFound > this.greedyParamForFarthestCustomer) break;
+        }
+        int minReadyTime = Integer.MAX_VALUE;
+        Customer bestFound = null;
+        for (Customer customer : candidateCustomers) {
+            if (customer.getReadyTime() < minReadyTime){
+                minReadyTime = customer.getReadyTime();
+                bestFound = customer;
             }
         }
-        return this.customers.get(farthestCustomerIndex);
+        return bestFound;
     }
 
     private void importData(String instance) {
@@ -178,7 +185,7 @@ public class Problem {
                 customerData = Arrays.stream(row.strip().split("\\s+")).mapToInt(Integer::parseInt).toArray();
                 Customer c = new Customer(customerData);
                 if (row_num == 0) {
-                    c.setServedTime(0);
+                    c.setArrivalTime(0);
                     c.setServed(true);
                     c.setPositionOnRoute(0.0);
                     this.depot = c;

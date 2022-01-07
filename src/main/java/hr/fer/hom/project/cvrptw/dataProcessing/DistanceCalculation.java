@@ -21,8 +21,8 @@ public class DistanceCalculation {
     public static void main(String[] args) {
 
         String distances = "";
-        String inputFile = "input/instances/i4.txt";
-        String outputFile = "input/distances/i4.txt";
+        String inputFile = "input/instances/i1.txt";
+        String outputFile = "input/distances/i1.txt";
 
         try {
             Path path = Paths.get(inputFile);
@@ -44,7 +44,7 @@ public class DistanceCalculation {
             double distance;
             NumberFormat nf = NumberFormat.getNumberInstance(Locale.UK);
             DecimalFormat df = (DecimalFormat)nf;
-            df.setMaximumFractionDigits(2);
+            df.setMaximumFractionDigits(4);
             for (int i=0; i< data.length; i++){
                 for (int j=0; j<data.length; j++){
                     distance = Math.sqrt(Math.pow((data[i][1] - data[j][1]), 2)

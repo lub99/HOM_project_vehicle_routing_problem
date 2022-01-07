@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class Solution {
 
     private Double totalDistance;
-    //private Integer totalTime;
     //private int vehiclesUsedCount;
     private List<Vehicle> vehiclesUsed;
     private boolean feasible;
@@ -23,9 +22,8 @@ public class Solution {
     public Solution() {
     }
 
-    public Solution(int totalDistance, List<Vehicle> vehiclesUsed) {  //
+    public Solution(int totalDistance, List<Vehicle> vehiclesUsed) {
         this.totalDistance = (double) totalDistance;
-        //this.totalTime = totalTime;
         this.vehiclesUsed = vehiclesUsed;
         //this.vehiclesUsedCount = vehiclesUsed.size();
     }
@@ -34,19 +32,9 @@ public class Solution {
         if (totalDistance != null) {
             return totalDistance;
         } else {
-            // calc total distance
             return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
         }
     }
-
-    /*public Integer getTotalTime() {
-        if (totalTime != null) {
-            return totalTime;
-        } else {
-            // calc total time
-            return null;
-        }
-    }*/
 
     public List<Vehicle> getVehiclesUsed() {
         return vehiclesUsed;
@@ -63,10 +51,6 @@ public class Solution {
     public void setTotalDistance(Double distance) {
         this.totalDistance = distance;
     }
-
-    /*public void setTotalTime(int time) {
-        this.totalTime = time;
-    }*/
 
     public void setVehiclesUsed(List<Vehicle> vehicles) {
         this.vehiclesUsed = vehicles;
