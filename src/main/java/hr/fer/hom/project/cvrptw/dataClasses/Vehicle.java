@@ -208,18 +208,43 @@ public class Vehicle {
     Racunanje centroida od jedne rute
     Ideja - krizati rute koje imaju bliske centroide
      */
-    /*public int[] calculateRouteCentroid(){
-        int[] centroid =
-    }*/
+    public int[] calculateRouteCentroid(){
+        int[] centroid = new int[2];
+        int xSum = this.route.stream().mapToInt(o -> o.getCustomer().getxCoordinate()).sum();
+        int ySum = this.route.stream().mapToInt(o -> o.getCustomer().getyCoordinate()).sum();
+        centroid[0] = (int) (xSum / this.route.size());
+        centroid[1] = (int) (ySum / this.route.size());
+        return centroid;
+    }
 
+    public Vehicle replaceCustomer(CustomerCalc oldCustomer, CustomerCalc newCustomer) {
+        if (newCustomer.getCustomer().getCustomerIndex() == 0) return this;
+        if (oldCustomer.getCustomer().getCustomerIndex() == 0) return this;
+        Vehicle newVehicle = new Vehicle(this.vehicleIndex, this.capacityLimit, this.getDepot(), this.distances);
+        int[] addingPossible;
+        for (int i = 1; i < this.route.size(); i++) {
+            CustomerCalc currentCustomer = this.route.get(i);
+            if (currentCustomer.equals(oldCustomer)) {
+                addingPossible = newVehicle.checkIfCustomerCanBeAddedToEnd(newCustomer.getCustomer());
+                if (addingPossible[0] == 0) return this;
+                newVehicle.addCustomerToEnd(newCustomer.getCustomer());
+            }else {
+                addingPossible = newVehicle.checkIfCustomerCanBeAddedToEnd(currentCustomer.getCustomer());
+                if (addingPossible[0] == 0) return this;
+                newVehicle.addCustomerToEnd(currentCustomer.getCustomer());
+            }
+        }
+        return newVehicle;
+    }
+
+    /*
+     */
 
     /*
     Two customers swap inter operator
     Zamjena dva korisnika koji su u razlicitim rutama
     Uzeti dvije rute koje imaju bliske centroide td je prva ruta random odabrana npr
      */
+    //public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){}
 
-    /*
-    ...druge ideje
-     */
 }

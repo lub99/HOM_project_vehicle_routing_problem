@@ -88,6 +88,12 @@ public class Problem {
         //Vehicle newVehicle = v.removeFromRoute(c);
         newVehicle.print();
 
+        CustomerCalc newCustomer = vehicles.get(5).getRoute().get(6);
+        System.out.println(newCustomer.printToString());
+        CustomerCalc oldCustomer = v.getRoute().get(1);
+        newVehicle = newVehicle.replaceCustomer(oldCustomer, newCustomer);
+        newVehicle.print();
+
         return null;
     }
 
@@ -262,5 +268,7 @@ public class Problem {
             e.printStackTrace();
         }
     }
+
+    //public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){}
 
 }
