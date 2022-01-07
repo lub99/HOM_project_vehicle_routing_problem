@@ -160,18 +160,17 @@ public class Vehicle {
     }
 
     /*
-    Two customers swap intra operator -> za minimizacije duljine rute
+    Two customers swap intra operator -> za minimizaciju duljine rute
     Zamjena dva random korisnika u ruti -> azurirati sve potrebne info
      */
-
-    /*
-    Add customer from route with min num of customers to some short route if possible
-      -> za minimizaciju broja vozila
-     */
+    public Vehicle twoCustomersIntraSwap(Customer customer1, Customer customer2){
+        return null;
+    }
 
     /*
     Racunanje centroida od jedne rute
      */
+
 
     /*
     Two customers swap inter operator

@@ -27,6 +27,9 @@ public class Problem {
     private List<Integer> unservedCustomerIndexes;
     private final int greedyParamForFarthestCustomer = 10;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
     private final int greedyParamForClosestCustomer = 5;
+    //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
+    private final int initialTemperature = 100;
+    private final int MAX_ITER = 10;
 
     public Problem() {
     }
@@ -51,6 +54,34 @@ public class Problem {
         initialSolution.printToFile(outputFile);
         Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
+        Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
+
+
+    }
+
+    /*
+        current_solution = initial_solution;
+        best_solution = current_solution;
+        current_temperature = initial_temperature
+        while(!termination_criterion){ //broj iteracija
+             new_solution = select neighbor -> primijeniti niz operatora
+             if (f(new_solution) < f(current_solution)) current_solution = new_solution
+             else if (f(new_solution) >= f(current_solution)) and (rand(0,1) < Math.pow(e, -df/current_temperature)
+                  current_solution = new_solution
+             if (f(current_solution) < f(best_solution)) best_solution = current_solution
+             update current_temperature
+        }
+        return best_solution;
+         */
+    private Solution simulatedAnnealingOptimization(Solution initialSolution) {
+        List<Vehicle> vehicles = initialSolution.getVehiclesUsed();
+        /*Vehicle v = vehicles.get(11);
+        v.print();
+        Customer probniKorisnik = this.customers.get(34);
+        Vehicle newVehicle = v.insertCustomerAtIndex(probniKorisnik, 5);
+        newVehicle.print();*/
+
+        return null;
     }
 
     private Solution greedyAlg() {
@@ -86,12 +117,6 @@ public class Problem {
         }
         solution.setVehiclesUsed(vehicles);
         System.out.println(solution);
-
-        /*Vehicle v = this.vehicles.get(11);
-        v.print();
-        Customer probniKorisnik = this.customers.get(34);
-        Vehicle newVehicle = v.insertCustomerAtIndex(probniKorisnik, 5);
-        newVehicle.print();*/
 
         return solution;
     }
@@ -153,6 +178,12 @@ public class Problem {
         }
         return bestFound;
     }
+
+    /*
+    Add customer from route with min num of customers to some short route if possible
+      -> za minimizaciju broja vozila
+      -> prebaciti u Problem
+     */
 
     /*
    Metoda sortira korisnike prema udaljenosti od trazenog korisnika
