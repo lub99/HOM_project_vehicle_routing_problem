@@ -27,6 +27,9 @@ public class Problem {
     private List<Integer> unservedCustomerIndexes;
     private final int greedyParamForFarthestCustomer = 10;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
     private final int greedyParamForClosestCustomer = 5;
+    //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
+    private final int initialTemperature = 100;
+    private final int MAX_ITER = 10;
 
     public Problem() {
     }
@@ -51,6 +54,28 @@ public class Problem {
         initialSolution.printToFile(outputFile);
         Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
+        Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
+
+    }
+
+    /*
+        current_solution = initial_solution;
+        best_solution = current_solution;
+        current_temperature = initial_temperature
+        while(!termination_criterion){ //broj iteracija
+             new_solution = select neighbor -> primijeniti niz operatora
+             if (f(new_solution) < f(current_solution)) current_solution = new_solution
+             else if (f(new_solution) >= f(current_solution)) and (rand(0,1) < Math.pow(e, -df/current_temperature)
+                  current_solution = new_solution
+             if (f(current_solution) < f(best_solution)) best_solution = current_solution
+             update current_temperature
+        }
+        return best_solution;
+         */
+    private Solution simulatedAnnealingOptimization(Solution initialSolution) {
+        List<Vehicle> vehicles = initialSolution.getVehiclesUsed();
+
+        return null;
     }
 
     private Solution greedyAlg() {
@@ -86,12 +111,6 @@ public class Problem {
         }
         solution.setVehiclesUsed(vehicles);
         System.out.println(solution);
-
-        /*Vehicle v = this.vehicles.get(11);
-        v.print();
-        Customer probniKorisnik = this.customers.get(34);
-        Vehicle newVehicle = v.insertCustomerAtIndex(probniKorisnik, 5);
-        newVehicle.print();*/
 
         return solution;
     }
@@ -223,6 +242,25 @@ public class Problem {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /*
+    U vehicle1 stavljamo customer2 i suprotno
+     */
+    public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){
+        Vehicle[] newVehicles = new Vehicle[2];
+        newVehicles[0] = vehicle1;
+        newVehicles[1] = vehicle2;
+        boolean replaced;
+        Vehicle newVehicle1 = vehicle1.replaceCustomer(customer1, customer2);
+        replaced = newVehicle1.replaceSuccessful(vehicle1);
+        if (!replaced) return newVehicles;
+        Vehicle newVehicle2 = vehicle2.replaceCustomer(customer2, customer1);
+        replaced = newVehicle2.replaceSuccessful(vehicle2);
+        if (!replaced) return newVehicles;
+        newVehicles[0] = newVehicle1;
+        newVehicles[1] = newVehicle2;
+        return newVehicles;
     }
 
 }

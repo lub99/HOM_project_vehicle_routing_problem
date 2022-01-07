@@ -1,9 +1,10 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
+import java.util.Objects;
+
 public class CustomerCalc {
 
     private Customer customer;
-    //private boolean served;
     private Integer arrivalTime;
     private Double positionOnRoute;
 
@@ -13,7 +14,6 @@ public class CustomerCalc {
 
     public CustomerCalc(Customer c, int arrivalTime, double positionOnRoute){
         this.customer = c;
-        //this.served = served;
         this.arrivalTime = arrivalTime;
         this.positionOnRoute = positionOnRoute;
     }
@@ -24,12 +24,7 @@ public class CustomerCalc {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-    /*public boolean isServed() {
-        return served;
-    }
-    public void setServed(boolean served) {
-        this.served = served;
-    }*/
+
     public Integer getArrivalTime() {
         return arrivalTime;
     }
@@ -44,5 +39,15 @@ public class CustomerCalc {
     }
     public String printToString() {
         return customer.getCustomerIndex() + "(" + arrivalTime + ")";
+    }
+
+     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerCalc customer = (CustomerCalc) o;
+        return Objects.equals(((CustomerCalc) o).getCustomer().getCustomerIndex(),
+                customer.getCustomer().getCustomerIndex())
+                && Objects.equals(arrivalTime, customer.arrivalTime);
     }
 }
