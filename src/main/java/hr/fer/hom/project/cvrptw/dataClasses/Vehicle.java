@@ -98,4 +98,28 @@ public class Vehicle {
         Customer depot = this.route.get(0).getCustomer();
         addCustomerToEnd(depot, distances);
     }
+
+    /*
+    Two customers swap intra operator -> za minimizacije duljine rute
+    Zamjena dva random korisnika u ruti -> azurirati sve potrebne info
+     */
+
+    /*
+    Add customer from route with min num of customers to some short route if possible
+      -> za minimizaciju broja vozila
+     */
+
+    /*
+    Racunanje centroida dviju ruta
+     */
+
+    /*
+    Two customers swap inter operator
+    Zamjena dva korisnika koji su u razlicitim rutama
+    Uzeti dvije rute koje imaju bliske centroide td je prva ruta random odabrana npr
+     */
+
+    /*
+    ...druge ideje
+     */
 }
