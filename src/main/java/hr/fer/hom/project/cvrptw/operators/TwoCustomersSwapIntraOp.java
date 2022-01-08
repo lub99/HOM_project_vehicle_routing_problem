@@ -31,9 +31,14 @@ public class TwoCustomersSwapIntraOp {
             CustomerCalc customer1 = vehicle.getRoute().get(customer1Index);
             CustomerCalc customer2 = vehicle.getRoute().get(customer2Index);
             Vehicle newVehicle = vehicle.twoCustomersIntraSwap(customer1, customer2);
-            //boolean addingSuccessful = vehicle.replaceSuccessful(newVehicle);
+            /*boolean addingSuccessful = vehicle.replaceSuccessful(newVehicle);
+            if (addingSuccessful){
+                System.out.println("promjena uspjesna");
+                bestNewVehicle = newVehicle;
+            }*/
             if (newVehicle.getRouteLength() < bestNewVehicle.getRouteLength()){
                 bestNewVehicle = newVehicle;  //onemogucava losija rjesenja po pitanju udaljenosti
+                //System.out.println("poboljsanje rjesenja");
             }
         }
         vehiclesUsed.remove(vehicle);

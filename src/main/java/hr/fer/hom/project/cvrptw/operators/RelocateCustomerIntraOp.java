@@ -31,9 +31,14 @@ public class RelocateCustomerIntraOp {
             int relocationIndex = random.nextInt(customersInVehicleCount-1)+1;
             if (relocationIndex == customerIndex) continue;
             Vehicle newVehicle = vehicle.relocateCustomer(customer, relocationIndex);
-            //boolean addingSuccessful = vehicle.replaceSuccessful(newVehicle);
+            /*boolean addingSuccessful = vehicle.replaceSuccessful(newVehicle);
+            if (addingSuccessful){
+                System.out.println("promjena uspjesna");
+                bestNewVehicle = newVehicle;
+            }*/
             if (newVehicle.getRouteLength() < bestNewVehicle.getRouteLength()){
                 bestNewVehicle = newVehicle;  //onemogucava losija rjesenja po pitanju udaljenosti
+                //System.out.println("poboljsanje rjesenja");
             }
         }
         vehiclesUsed.remove(vehicle);

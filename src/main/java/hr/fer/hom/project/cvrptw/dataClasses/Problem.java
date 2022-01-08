@@ -28,9 +28,9 @@ public class Problem {
     private final int greedyParamForFarthestCustomer = 75;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
     private final int greedyParamForClosestCustomer = 5;
     //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
-    private final int initialTemperature = 100;
+    private final int initialTemperature = 10;
     private final int finalTemperature = 1;
-    private final int MAX_ITER = 2;
+    private final int MAX_ITER = 50;
     private final int timeLimit = 1;
     private Timer timer;
 
@@ -60,7 +60,7 @@ public class Problem {
         //Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
         Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
-        System.out.println(optimizedSolution.toString());
+        //System.out.println(optimizedSolution.toString());
 
     }
 
@@ -69,19 +69,21 @@ public class Problem {
         Solution bestSolution = initialSolution.copy();
         double currentTemperature = initialTemperature;
         int iter = 0;
-        while(iter < MAX_ITER || currentTemperature > finalTemperature
-               && System.currentTimeMillis() < this.timer.getEnd()){
+        System.out.println(currentSolution.getTotalDistance());
+        while(iter < MAX_ITER){ // || currentTemperature > finalTemperature
+              // && System.currentTimeMillis() < this.timer.getEnd()){
             NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator(currentSolution);
             Solution newSolution = neighborhoodGenerator.selectNeighbor();
             if (currentSolution.checkIfNewSolutionIsBetter(newSolution)){
                 currentSolution = newSolution.copy();
-            }else if(checkTemperatureCondition(currentSolution, newSolution, currentTemperature)){
+            }/*else if(checkTemperatureCondition(currentSolution, newSolution, currentTemperature)){
                 currentSolution = newSolution.copy();
             }
             if (bestSolution.checkIfNewSolutionIsBetter(currentSolution)){
                 bestSolution = currentSolution.copy();
-            }
-            currentTemperature *= 0.98;  //ili nesto drugo
+            }*/
+            System.out.println(iter + ": " + newSolution.getTotalDistance());
+            currentTemperature *= 0.95;  //ili nesto drugo
             iter++;
         }
         return bestSolution;

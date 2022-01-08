@@ -17,7 +17,6 @@ public class Solution {
 
     private Double totalDistance;
     private List<Vehicle> vehiclesUsed;
-    //private boolean feasible;
 
     public Solution() {
     }
@@ -28,11 +27,12 @@ public class Solution {
     }
 
     public Double getTotalDistance() {
-        if (totalDistance != null) {
+        /*if (totalDistance != null) {
             return totalDistance;
         } else {
             return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
-        }
+        }*/
+        return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
     }
 
     public List<Vehicle> getVehiclesUsed() {
