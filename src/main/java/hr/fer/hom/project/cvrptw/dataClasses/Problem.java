@@ -1,5 +1,6 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
+import hr.fer.hom.project.cvrptw.Timer;
 import hr.fer.hom.project.cvrptw.utils.Util;
 
 import java.io.BufferedReader;
@@ -30,6 +31,8 @@ public class Problem {
     private final int initialTemperature = 100;
     private final int finalTemperature = 1;
     private final int MAX_ITER = 2;
+    private final int timeLimit = 1;
+    private Timer timer;
 
     public Problem() {
     }
@@ -37,6 +40,7 @@ public class Problem {
     public static void main(String[] args) {
 
         Problem problem = new Problem();
+        problem.setTimer();
 
         String instanceFile = args[0];
         String distancesFile = args[1];
@@ -50,6 +54,7 @@ public class Problem {
         */
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
+
         Solution initialSolution = problem.greedyAlg();
         initialSolution.printToFile(outputFile);
         Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
@@ -64,7 +69,8 @@ public class Problem {
         Solution bestSolution = initialSolution.copy();
         double currentTemperature = initialTemperature;
         int iter = 0;
-        while(iter < MAX_ITER || currentTemperature > finalTemperature){
+        while(iter < MAX_ITER || currentTemperature > finalTemperature
+               && System.currentTimeMillis() < this.timer.getEnd()){
             Solution newSolution = null; //selectNeighbor(currentSolution);
             if (currentSolution.checkIfNewSolutionIsBetter(newSolution)){
                 currentSolution = newSolution.copy();
@@ -75,6 +81,7 @@ public class Problem {
                 bestSolution = currentSolution.copy();
             }
             currentTemperature *= 0.98;  //ili nesto drugo
+            iter++;
         }
         return bestSolution;
     }
@@ -249,6 +256,10 @@ public class Problem {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setTimer() {
+        this.timer = new Timer(this.timeLimit);
     }
 
     /*
