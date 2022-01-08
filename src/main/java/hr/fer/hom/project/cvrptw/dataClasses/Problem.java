@@ -59,8 +59,8 @@ public class Problem {
         initialSolution.printToFile(outputFile);
         Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
-        //Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
-        //System.out.println(optimizedSolution.toString());
+        Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
+        System.out.println(optimizedSolution.toString());
 
     }
 
@@ -71,7 +71,8 @@ public class Problem {
         int iter = 0;
         while(iter < MAX_ITER || currentTemperature > finalTemperature
                && System.currentTimeMillis() < this.timer.getEnd()){
-            Solution newSolution = null; //selectNeighbor(currentSolution);
+            NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator(currentSolution);
+            Solution newSolution = neighborhoodGenerator.selectNeighbor();
             if (currentSolution.checkIfNewSolutionIsBetter(newSolution)){
                 currentSolution = newSolution.copy();
             }else if(checkTemperatureCondition(currentSolution, newSolution, currentTemperature)){
