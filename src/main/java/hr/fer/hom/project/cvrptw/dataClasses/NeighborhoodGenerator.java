@@ -16,9 +16,8 @@ public class NeighborhoodGenerator {
      */
     public Solution selectNeighbor() {
         Solution newSolution = this.previousSolution.copy();
-        //primjena operatora
-        RelocateCustomerIntraOp relocateIntraOp = new RelocateCustomerIntraOp(newSolution);
-        newSolution = relocateIntraOp.run();
+        //RelocateCustomerIntraOp relocateIntraOp = new RelocateCustomerIntraOp(newSolution);
+        //newSolution = relocateIntraOp.run();
         TwoCustomersSwapIntraOp twoSwapIntraOp = new TwoCustomersSwapIntraOp(newSolution);
         newSolution = twoSwapIntraOp.run();
         return newSolution;

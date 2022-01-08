@@ -33,7 +33,7 @@ public class RelocateCustomerIntraOp {
             Vehicle newVehicle = vehicle.relocateCustomer(customer, relocationIndex);
             //boolean addingSuccessful = vehicle.replaceSuccessful(newVehicle);
             if (newVehicle.getRouteLength() < bestNewVehicle.getRouteLength()){
-                bestNewVehicle = newVehicle;
+                bestNewVehicle = newVehicle;  //onemogucava losija rjesenja po pitanju udaljenosti
             }
         }
         vehiclesUsed.remove(vehicle);
