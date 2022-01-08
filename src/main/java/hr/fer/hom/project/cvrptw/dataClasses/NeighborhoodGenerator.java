@@ -2,6 +2,7 @@ package hr.fer.hom.project.cvrptw.dataClasses;
 
 import hr.fer.hom.project.cvrptw.operators.RelocateCustomerInterOp;
 import hr.fer.hom.project.cvrptw.operators.RelocateCustomerIntraOp;
+import hr.fer.hom.project.cvrptw.operators.TwoCustomersSwapInterOp;
 import hr.fer.hom.project.cvrptw.operators.TwoCustomersSwapIntraOp;
 
 public class NeighborhoodGenerator {
@@ -17,10 +18,12 @@ public class NeighborhoodGenerator {
      */
     public Solution selectNeighbor() {
         Solution newSolution = this.previousSolution.copy();
-        /*RelocateCustomerIntraOp relocateIntraOp = new RelocateCustomerIntraOp(newSolution);
+        RelocateCustomerIntraOp relocateIntraOp = new RelocateCustomerIntraOp(newSolution);
         newSolution = relocateIntraOp.run();
         TwoCustomersSwapIntraOp twoSwapIntraOp = new TwoCustomersSwapIntraOp(newSolution);
-        newSolution = twoSwapIntraOp.run();*/
+        newSolution = twoSwapIntraOp.run();
+        TwoCustomersSwapInterOp twoSwapInterOp = new TwoCustomersSwapInterOp(newSolution);
+        newSolution = twoSwapInterOp.run();
         RelocateCustomerInterOp relocateInterOp = new RelocateCustomerInterOp(newSolution);
         newSolution = relocateInterOp.run();
         return newSolution;

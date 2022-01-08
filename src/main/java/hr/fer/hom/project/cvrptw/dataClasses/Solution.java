@@ -93,4 +93,10 @@ public class Solution {
         return newSolution.getVehiclesUsedCount() < this.getVehiclesUsedCount()
                 || (newSolution.getTotalDistance() < this.getTotalDistance());
     }
+
+    public void replaceVehicles(List<Vehicle> oldVehicles, List<Vehicle> newVehicles) {
+        vehiclesUsed.removeAll(oldVehicles);
+        vehiclesUsed.addAll(newVehicles);
+        totalDistance = getTotalDistance();
+    }
 }

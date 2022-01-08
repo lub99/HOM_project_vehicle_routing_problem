@@ -2,6 +2,7 @@ package hr.fer.hom.project.cvrptw.dataClasses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Vehicle {
@@ -253,6 +254,11 @@ public class Vehicle {
             if (!this.route.get(i).equals(other.route.get(i))) return false;
         }
         return true;
+    }
+
+    public CustomerCalc chooseRandomCustomerFromRouteNotDepot() {
+        var customerIndex = new Random().nextInt(route.size() - 2) + 1;
+        return route.get(customerIndex);
     }
 
 }

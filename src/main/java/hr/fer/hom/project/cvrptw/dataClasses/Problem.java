@@ -30,7 +30,7 @@ public class Problem {
     //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
     private final int initialTemperature = 10;
     private final int finalTemperature = 1;
-    private final int MAX_ITER = 50;
+    private final int MAX_ITER = 100;
     private final int timeLimit = 1;
     private Timer timer;
 
@@ -74,15 +74,17 @@ public class Problem {
               // && System.currentTimeMillis() < this.timer.getEnd()){
             NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator(currentSolution);
             Solution newSolution = neighborhoodGenerator.selectNeighbor();
+            //currentSolution = newSolution;
             if (currentSolution.checkIfNewSolutionIsBetter(newSolution)){
                 currentSolution = newSolution.copy();
-            }/*else if(checkTemperatureCondition(currentSolution, newSolution, currentTemperature)){
+            }
+            else if(checkTemperatureCondition(currentSolution, newSolution, currentTemperature)){
                 currentSolution = newSolution.copy();
             }
             if (bestSolution.checkIfNewSolutionIsBetter(currentSolution)){
                 bestSolution = currentSolution.copy();
-            }*/
-            System.out.println(iter + ": " + newSolution.getTotalDistance());
+            }
+            System.out.println(iter + ": " + bestSolution.getTotalDistance());
             currentTemperature *= 0.95;  //ili nesto drugo
             iter++;
         }
@@ -268,7 +270,7 @@ public class Problem {
     /*
     U vehicle1 stavljamo customer2 i suprotno
      */
-    public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){
+    public static Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){
         Vehicle[] newVehicles = new Vehicle[2];
         newVehicles[0] = vehicle1;
         newVehicles[1] = vehicle2;
