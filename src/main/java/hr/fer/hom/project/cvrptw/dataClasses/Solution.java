@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,11 +29,6 @@ public class Solution {
     }
 
     public Double getTotalDistance() {
-        /*if (totalDistance != null) {
-            return totalDistance;
-        } else {
-            return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
-        }*/
         return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
     }
 
@@ -43,8 +40,6 @@ public class Solution {
         return vehiclesUsed.size();
     }
 
-    //public boolean getFeasible() {return feasible;}
-
     public void setTotalDistance(Double distance) {
         this.totalDistance = distance;
     }
@@ -52,8 +47,6 @@ public class Solution {
     public void setVehiclesUsed(List<Vehicle> vehicles) {
         this.vehiclesUsed = vehicles;
     }
-
-    //public void setFeasible(boolean feasible) { this.feasible = feasible;}
 
     @Override
     public String toString() {
@@ -94,9 +87,41 @@ public class Solution {
                 || (newSolution.getTotalDistance() < this.getTotalDistance());
     }
 
+    public boolean checkIfNewSolutionIsBetterPlus(Solution newSolution){
+        return newSolution.getVehiclesUsedCount() < this.getVehiclesUsedCount()
+                || newSolution.getLowestNumOfCustomerInOneVehicle() < this.getLowestNumOfCustomerInOneVehicle()
+                || (newSolution.getTotalDistance() < this.getTotalDistance());
+    }
+
     public void replaceVehicles(List<Vehicle> oldVehicles, List<Vehicle> newVehicles) {
         vehiclesUsed.removeAll(oldVehicles);
         vehiclesUsed.addAll(newVehicles);
         totalDistance = getTotalDistance();
+    }
+
+    public int getLowestNumOfCustomerInOneVehicle(){
+        Collections.sort(this.vehiclesUsed, Comparator.comparing(Vehicle::getNumberOfCustomersInRoute));
+        return this.vehiclesUsed.get(0).getNumberOfCustomersInRoute();
+    }
+
+    public String toString2() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(vehiclesUsed.size()).append("\n");
+
+        int index = 1;
+        for (var vehicle : vehiclesUsed) {
+            stringBuilder.append(index).append(": v_id=")
+                    .append(vehicle.getVehicleIndex()).append(" -> ");
+            var oneRoute = vehicle.getRoute()
+                    .stream()
+                    .map(CustomerCalc::printToString)
+                    .collect(Collectors.joining("->"));
+            stringBuilder.append(oneRoute).append("\n");
+            index++;
+        }
+
+        stringBuilder.append(getTotalDistance()).append("\n");
+
+        return stringBuilder.toString();
     }
 }

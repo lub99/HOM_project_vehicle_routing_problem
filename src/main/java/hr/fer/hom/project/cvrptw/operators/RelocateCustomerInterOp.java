@@ -47,7 +47,6 @@ public class RelocateCustomerInterOp {
                 newVehicle = manyCustomersVehicle.insertCustomerAtIndex(customer.getCustomer(), index);
                 addingSuccessful = manyCustomersVehicle.replaceSuccessful(newVehicle);
                 if (addingSuccessful){
-                   //System.out.println("korisnik ubacen");
                    addingSuccessful = true;
                    increasedVehicleNew = newVehicle;
                    increasedVehicleOld = manyCustomersVehicle;
@@ -59,11 +58,15 @@ public class RelocateCustomerInterOp {
             if (reducedVehicle.getRoute().size() != 2){
                 vehicles.remove(fewCustomersVehicle);
                 vehicles.add(reducedVehicle);
+            }else{
+                vehicles.remove(fewCustomersVehicle);
             }
             vehicles.remove(increasedVehicleOld);
             vehicles.add(increasedVehicleNew);
             solution.setVehiclesUsed(vehicles);
-            System.out.println("Inserted customer: " + customer.getCustomer().getCustomerIndex());
+            System.out.println("Inserted customer: " + customer.getCustomer().getCustomerIndex()
+                + ", from vehicle: " + fewCustomersVehicle.getVehicleIndex()
+                + ", to vehicle: " + increasedVehicleNew.getVehicleIndex());
         }
         return this.solution;
     }
@@ -77,5 +80,6 @@ public class RelocateCustomerInterOp {
         else if (randomNumber > 8) shortRouteIndex = 2;
         else shortRouteIndex = 1;
         return vehicles.get(shortRouteIndex);
+        //return vehicles.get(0);
     }
 }

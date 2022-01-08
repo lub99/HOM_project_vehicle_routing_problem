@@ -28,9 +28,10 @@ public class Problem {
     private final int greedyParamForFarthestCustomer = 75;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
     private final int greedyParamForClosestCustomer = 5;
     //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
-    private final int initialTemperature = 10;
+    private final int initialTemperature = 25;
     private final int finalTemperature = 1;
-    private final int MAX_ITER = 100;
+    private final int MAX_ITER = 500;
+    private final int MAX_ITER_NO_IMPROVEMENT = 10;
     private final int timeLimit = 1;
     private Timer timer;
 
@@ -60,7 +61,9 @@ public class Problem {
         //Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
         Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
-        //System.out.println(optimizedSolution.toString());
+        System.out.println(optimizedSolution.toString());
+        optimizedSolution.printToFile(outputFile);
+        Util.printSolutionOnlyCustomerIndices(optimizedSolution, outputFileForPython);
 
     }
 
@@ -69,24 +72,39 @@ public class Problem {
         Solution bestSolution = initialSolution.copy();
         double currentTemperature = initialTemperature;
         int iter = 0;
+        int no_improvement_iters = 0;
+        NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator();
         System.out.println(currentSolution.getTotalDistance());
         while(iter < MAX_ITER){ // || currentTemperature > finalTemperature
               // && System.currentTimeMillis() < this.timer.getEnd()){
-            NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator(currentSolution);
+            if (no_improvement_iters >= MAX_ITER_NO_IMPROVEMENT){
+                neighborhoodGenerator.setPreviousSolution(bestSolution);
+            }else{
+                neighborhoodGenerator.setPreviousSolution(currentSolution);
+            }
             Solution newSolution = neighborhoodGenerator.selectNeighbor();
-            //currentSolution = newSolution;
-            if (currentSolution.checkIfNewSolutionIsBetter(newSolution)){
+            if (currentSolution.checkIfNewSolutionIsBetterPlus(newSolution)){
                 currentSolution = newSolution.copy();
             }
             else if(checkTemperatureCondition(currentSolution, newSolution, currentTemperature)){
                 currentSolution = newSolution.copy();
             }
-            if (bestSolution.checkIfNewSolutionIsBetter(currentSolution)){
+            if (bestSolution.checkIfNewSolutionIsBetterPlus(currentSolution)){
                 bestSolution = currentSolution.copy();
+                currentTemperature *= 0.98;
+                no_improvement_iters = 0;
             }
-            System.out.println(iter + ": " + bestSolution.getTotalDistance());
-            currentTemperature *= 0.95;  //ili nesto drugo
+            System.out.println(iter + ": new solution: " + newSolution.getTotalDistance()
+                + ", current solution: " + currentSolution.getTotalDistance()
+                + ", best solution: " + bestSolution.getTotalDistance()
+                + ", temperature: " + currentTemperature);
+            //currentTemperature *= 0.99;
+            /*System.out.println("Best solution");
+            System.out.println(bestSolution.toString2());
+            System.out.println("Current solution");
+            System.out.println(bestSolution.toString2());*/
             iter++;
+            no_improvement_iters++;
         }
         return bestSolution;
     }

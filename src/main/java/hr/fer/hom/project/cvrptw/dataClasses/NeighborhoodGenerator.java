@@ -9,7 +9,13 @@ public class NeighborhoodGenerator {
 
     private Solution previousSolution;
 
+    public NeighborhoodGenerator(){}
+
     public NeighborhoodGenerator(Solution previousSolution){
+        this.previousSolution = previousSolution;
+    }
+
+    public void setPreviousSolution(Solution previousSolution){
         this.previousSolution = previousSolution;
     }
 
