@@ -16,4 +16,13 @@ public class NeighborhoodGenerator {
         //primjena operatora
         return newSolution;
     }
+
+    /*
+    Implementirani intra operatori:
+     - two customers intra swap
+     - relocate customer -> insert customer within one vehicle
+    Implementirani inter operatori:
+     - two customers inter swap
+     - relocate customer -> insert customer from one vehicle to other
+     */
 }
