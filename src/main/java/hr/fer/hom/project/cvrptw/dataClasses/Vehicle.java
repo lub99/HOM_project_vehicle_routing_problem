@@ -58,7 +58,7 @@ public class Vehicle {
     public Customer getDepot() { return route.get(0).getCustomer(); }
 
     //skladiste se broji samo na pocetku
-    public int getNumberOfCustomersInRoute() { return route.size(); }
+    public int getNumberOfCustomersInRoute() { return route.size()-1; }
 
     public void setRouteTime(int time) {
         this.routeTime = time;
@@ -134,7 +134,7 @@ public class Vehicle {
     Prihvacaju se indexi od 1 do duljine rute?
      */
     public Vehicle insertCustomerAtIndex(Customer customer, int index){
-        if (index > this.getNumberOfCustomersInRoute()) return this;
+        if (index > this.getRoute().size()) return this;
         int[] addingPossible;
         Vehicle newVehicle = new Vehicle(this.vehicleIndex, this.capacityLimit, this.getDepot(), this.distances);
         for (int i=1; i<=this.route.size(); i++){
