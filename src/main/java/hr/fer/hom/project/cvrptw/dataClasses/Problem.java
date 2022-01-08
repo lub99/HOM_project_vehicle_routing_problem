@@ -266,7 +266,7 @@ public class Problem {
     /*
     U vehicle1 stavljamo customer2 i suprotno
      */
-    public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){
+    public static Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){
         Vehicle[] newVehicles = new Vehicle[2];
         newVehicles[0] = vehicle1;
         newVehicles[1] = vehicle2;

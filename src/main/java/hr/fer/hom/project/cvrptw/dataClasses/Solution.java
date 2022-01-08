@@ -28,11 +28,7 @@ public class Solution {
     }
 
     public Double getTotalDistance() {
-        if (totalDistance != null) {
-            return totalDistance;
-        } else {
-            return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
-        }
+        return vehiclesUsed.stream().mapToDouble(Vehicle::getRouteLength).sum();
     }
 
     public List<Vehicle> getVehiclesUsed() {
@@ -85,12 +81,18 @@ public class Solution {
         }
     }
 
-    public Solution copy(){
+    public Solution copy() {
         return new Solution(new ArrayList<>(this.getVehiclesUsed()));
     }
 
-    public boolean checkIfNewSolutionIsBetter(Solution newSolution){
+    public boolean checkIfNewSolutionIsBetter(Solution newSolution) {
         return newSolution.getVehiclesUsedCount() < this.getVehiclesUsedCount()
                 || (newSolution.getTotalDistance() < this.getTotalDistance());
+    }
+
+    public void replaceVehicles(List<Vehicle> oldVehicles, List<Vehicle> newVehicles) {
+        vehiclesUsed.removeAll(oldVehicles);
+        vehiclesUsed.addAll(newVehicles);
+        totalDistance = getTotalDistance();
     }
 }
