@@ -1,5 +1,6 @@
 package hr.fer.hom.project.cvrptw.operators;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -23,17 +24,20 @@ public class RelocateCustomerIntraOp {
         Vehicle vehicle = solution.getVehiclesUsed().get(vehicleIndex);
 
         int customersInVehicleCount = vehicle.getNumberOfCustomersInRoute();
-        if (customersInVehicleCount == 2) return this.solution;
-        Vehicle newVehicle = null;
-        //pokusaj 5x primijeniti operator
+        Vehicle bestNewVehicle = vehicle;
+        int customerIndex = random.nextInt(customersInVehicleCount-1)+1;
+        CustomerCalc customer = vehicle.getRoute().get(customerIndex);
         for(int i=0; i<5; i++){
-            int customerIndex = random.nextInt(customersInVehicleCount-1)+1;
-            CustomerCalc customer = vehicle.getRoute().get(customerIndex);
             int relocationIndex = random.nextInt(customersInVehicleCount-1)+1;
-            newVehicle = vehicle.relocateCustomer(customer, relocationIndex);
+            if (relocationIndex == customerIndex) continue;
+            Vehicle newVehicle = vehicle.relocateCustomer(customer, relocationIndex);
+            //boolean addingSuccessful = vehicle.replaceSuccessful(newVehicle);
+            if (newVehicle.getRouteLength() < bestNewVehicle.getRouteLength()){
+                bestNewVehicle = newVehicle;
+            }
         }
         vehiclesUsed.remove(vehicle);
-        vehiclesUsed.add(newVehicle);
+        vehiclesUsed.add(bestNewVehicle);
         solution.setVehiclesUsed(vehiclesUsed);
         return solution;
     }

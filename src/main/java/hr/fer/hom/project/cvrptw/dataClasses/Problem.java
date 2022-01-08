@@ -25,7 +25,7 @@ public class Problem {
     private int vehicleCapacity;
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
-    private final int greedyParamForFarthestCustomer = 10;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
+    private final int greedyParamForFarthestCustomer = 75;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
     private final int greedyParamForClosestCustomer = 5;
     //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
     private final int initialTemperature = 100;
@@ -56,8 +56,8 @@ public class Problem {
         problem.importDistanceMatrix(distancesFile);
 
         Solution initialSolution = problem.greedyAlg();
-        initialSolution.printToFile(outputFile);
-        Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
+        //initialSolution.printToFile(outputFile);
+        //Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
         Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
         System.out.println(optimizedSolution.toString());
