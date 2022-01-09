@@ -18,20 +18,17 @@ public class Problem {
     private int customerCount;
     private List<Customer> customers;
     private List<CustomerCalc> customersCalcs;
-    private Customer depot; //-> takoder prvi korisnik u gornjoj listi
+    private Customer depot;
     private double[][] distances;
     private int vehicleLimit;
     private int vehicleCapacity;
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
-    private int greedyParamForFarthestCustomer; // = 150;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
-    private final int greedyParamForClosestCustomer = 5;
-    //75 i 3 najbolje za i1
-    private final int initialTemperature = 70;  //25
+    private int greedyParamForFarthestCustomer;
+    private final int greedyParamForClosestCustomer = 6;
+    private final int initialTemperature = 100;
     private final double finalTemperature = 0.01;
-    private final double beta = 0.001;
-    private final int MAX_ITER = 10000;
-    //private final int MAX_ITER_NO_IMPROVEMENT = (int) 0.01*MAX_ITER; //1%
+    private final double beta = 0.00025;
     private final int MAX_ITER_NO_IMPROVEMENT = 250;
     private Timer timer;
 
@@ -44,11 +41,17 @@ public class Problem {
 
         //int instanceIndex = Integer.parseInt(args[0]);
         //int timeLimit = Integer.parseInt(args[1]);
-        int instanceIndex = 6;
-        int timeLimit = 1;
+        int instanceIndex = 5;
+        int timeLimit = 3;
+        String printTime = null;
+        if (timeLimit > 5){
+            printTime = "un";
+        }else{
+            printTime = timeLimit + "m";
+        }
         problem.setTimer(timeLimit);
         String inputFileName = "i" + instanceIndex + ".txt";
-        String outputFileName = "res-" + timeLimit + "m-i" + instanceIndex + ".txt";
+        String outputFileName = "res-" + printTime + "-i" + instanceIndex + ".txt";
 
         String instanceFile = "input/instances/" + inputFileName;
         String distancesFile = "input/distances/" + inputFileName;
@@ -75,6 +78,10 @@ public class Problem {
         if (!previousSolutionExists) {
             System.out.println("New solution found, saving solution");
             optimizedSolution.printToFile(outputFile);
+            problem.printToFile(outputFileBestSeenSolutionParams, problem.toString()
+                    + "\n number_of_iterations=" + optimizedSolution.getNumberOfIter() + "\n" +
+                    "final_SA_temp=" + optimizedSolution.getFinalTempSA()
+            );
             Util.printSolutionOnlyCustomerIndices(optimizedSolution, outputFileForPython);
         } else {
             if (problem.checkIfNewSolutionIsBetter(lastBestSavedSolutionParameters, currentSolutionParameters)) {
@@ -96,8 +103,7 @@ public class Problem {
         int iter = 0;
         int no_improvement_iters = 0;
         NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator();
-        while (iter < MAX_ITER //){ //currentTemperature > finalTemperature
-                || System.currentTimeMillis() < this.timer.getEnd()) {
+        while (System.currentTimeMillis() < this.timer.getEnd()) {  //){ //currentTemperature > finalTemperature
             if (no_improvement_iters >= MAX_ITER_NO_IMPROVEMENT) {
                 neighborhoodGenerator.setPreviousSolution(bestSolution);
             } else {
@@ -109,9 +115,8 @@ public class Problem {
             } else if (checkTemperatureCondition(currentSolution, newSolution, currentTemperature)) {
                 currentSolution = newSolution.copy();
             }
-            if (bestSolution.checkIfNewSolutionIsBetterPlus(currentSolution)) {
+            if (bestSolution.checkIfNewSolutionIsBetter(currentSolution)) {
                 bestSolution = currentSolution.copy();
-                //currentTemperature *= 0.99;
                 currentTemperature /= (1 + this.beta * currentTemperature);
                 no_improvement_iters = 0;
             }
@@ -357,7 +362,6 @@ public class Problem {
                 "initialTemperature=" + initialTemperature + "\n" +
                 "finalTemperature=" + finalTemperature + "\n" +
                 "beta=" + beta + "\n" +
-                "MAX_ITER=" + MAX_ITER + "\n" +
                 "MAX_ITER_NO_IMPROVEMENT=" + MAX_ITER_NO_IMPROVEMENT;
     }
 
