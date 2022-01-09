@@ -21,8 +21,8 @@ public class DistanceCalculation {
     public static void main(String[] args) {
 
         String distances = "";
-        String inputFile = "input/instances/i4.txt";
-        String outputFile = "input/distances/i4.txt";
+        String inputFile = "input/instances/i1.txt";
+        String outputFile = "input/distances/i1.txt";
 
         try {
             Path path = Paths.get(inputFile);
