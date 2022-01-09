@@ -1,0 +1,3 @@
+hr.fer.hom.project.cvrptw.dataClasses.Problem@3a82f6ef
+ number_of_iterations=null
+final_SA_temp=null
