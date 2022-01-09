@@ -93,6 +93,13 @@ public class Solution {
                 || (newSolution.getTotalDistance() < this.getTotalDistance());
     }
 
+    public boolean checkIfNewSolutionIsBetterPlus2(Solution newSolution){
+        return newSolution.getVehiclesUsedCount() < this.getVehiclesUsedCount()
+                || newSolution.getLowestNumOfCustomerInOneVehicle() < this.getLowestNumOfCustomerInOneVehicle()
+                || (newSolution.getTotalDistance() < this.getTotalDistance())
+                && newSolution.getLowestNumOfCustomerInOneVehicle() < 5;
+    }
+
     public void replaceVehicles(List<Vehicle> oldVehicles, List<Vehicle> newVehicles) {
         vehiclesUsed.removeAll(oldVehicles);
         vehiclesUsed.addAll(newVehicles);

@@ -64,9 +64,9 @@ public class RelocateCustomerInterOp {
             vehicles.remove(increasedVehicleOld);
             vehicles.add(increasedVehicleNew);
             solution.setVehiclesUsed(vehicles);
-            System.out.println("Inserted customer: " + customer.getCustomer().getCustomerIndex()
+            /*System.out.println("Inserted customer: " + customer.getCustomer().getCustomerIndex()
                 + ", from vehicle: " + fewCustomersVehicle.getVehicleIndex()
-                + ", to vehicle: " + increasedVehicleNew.getVehicleIndex());
+                + ", to vehicle: " + increasedVehicleNew.getVehicleIndex());*/
         }
         return this.solution;
     }
@@ -80,6 +80,6 @@ public class RelocateCustomerInterOp {
         else if (randomNumber > 8) shortRouteIndex = 2;
         else shortRouteIndex = 1;
         return vehicles.get(shortRouteIndex);
-        //return vehicles.get(0);
+        //return vehicles.get(0);  //najbolje rjesenje za i1
     }
 }

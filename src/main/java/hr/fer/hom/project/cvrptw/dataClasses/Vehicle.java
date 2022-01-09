@@ -125,7 +125,8 @@ public class Vehicle {
             return returnStatement;
         }
         returnStatement[0] = 1;
-        returnStatement[1] = timeOfReturnToDepot;
+        //returnStatement[1] = timeOfReturnToDepot;
+        returnStatement[1] = potentialArrivalToNextCustomer + nextCustomer.getServiceTime();
         return returnStatement;
     }
     /*

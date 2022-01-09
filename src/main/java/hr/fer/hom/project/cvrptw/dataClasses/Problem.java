@@ -26,12 +26,12 @@ public class Problem {
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
     private final int greedyParamForFarthestCustomer = 75;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
-    private final int greedyParamForClosestCustomer = 5;
-    //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
+    private final int greedyParamForClosestCustomer = 3;
+    //75 i 5 najbolje za i1
     private final int initialTemperature = 25;
     private final int finalTemperature = 1;
-    private final int MAX_ITER = 500;
-    private final int MAX_ITER_NO_IMPROVEMENT = 10;
+    private final int MAX_ITER = 2500;
+    private final int MAX_ITER_NO_IMPROVEMENT = 25;
     private final int timeLimit = 1;
     private Timer timer;
 
@@ -42,11 +42,12 @@ public class Problem {
 
         Problem problem = new Problem();
         problem.setTimer();
-
+        ///*
         String instanceFile = args[0];
         String distancesFile = args[1];
         String outputFile = args[2];
         String outputFileForPython = args[3];
+        //*/
         /*
         String instanceFile = "input/instances/i1.txt";
         String distancesFile = "input/distances/i1.txt";
@@ -57,6 +58,7 @@ public class Problem {
         problem.importDistanceMatrix(distancesFile);
 
         Solution initialSolution = problem.greedyAlg();
+        System.out.println(initialSolution.toString());
         //initialSolution.printToFile(outputFile);
         //Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
@@ -74,7 +76,6 @@ public class Problem {
         int iter = 0;
         int no_improvement_iters = 0;
         NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator();
-        System.out.println(currentSolution.getTotalDistance());
         while(iter < MAX_ITER){ // || currentTemperature > finalTemperature
               // && System.currentTimeMillis() < this.timer.getEnd()){
             if (no_improvement_iters >= MAX_ITER_NO_IMPROVEMENT){
@@ -94,10 +95,10 @@ public class Problem {
                 currentTemperature *= 0.98;
                 no_improvement_iters = 0;
             }
-            System.out.println(iter + ": new solution: " + newSolution.getTotalDistance()
+            /*System.out.println(iter + ": new solution: " + newSolution.getTotalDistance()
                 + ", current solution: " + currentSolution.getTotalDistance()
                 + ", best solution: " + bestSolution.getTotalDistance()
-                + ", temperature: " + currentTemperature);
+                + ", temperature: " + currentTemperature);*/
             //currentTemperature *= 0.99;
             /*System.out.println("Best solution");
             System.out.println(bestSolution.toString2());
@@ -141,8 +142,6 @@ public class Problem {
             System.out.println("Infeasible solution, unserved customers exist");
         }
         solution.setVehiclesUsed(vehicles);
-        System.out.println(solution);
-
         return solution;
     }
 
