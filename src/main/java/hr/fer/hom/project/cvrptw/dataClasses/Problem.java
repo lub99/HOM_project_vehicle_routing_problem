@@ -31,8 +31,8 @@ public class Problem {
     private final int initialTemperature = 25;
     private final int finalTemperature = 1;
     private final int MAX_ITER = 2500;
-    private final int MAX_ITER_NO_IMPROVEMENT = 25;
-    private final int timeLimit = 1;
+    private final int MAX_ITER_NO_IMPROVEMENT = (int) 0.01*MAX_ITER; //1%
+    private int timeLimit = 1;
     private Timer timer;
 
     public Problem() {
@@ -42,31 +42,31 @@ public class Problem {
 
         Problem problem = new Problem();
         problem.setTimer();
-        ///*
-        String instanceFile = args[0];
-        String distancesFile = args[1];
-        String outputFile = args[2];
-        String outputFileForPython = args[3];
-        //*/
-        /*
-        String instanceFile = "input/instances/i1.txt";
-        String distancesFile = "input/distances/i1.txt";
-        String outputFile = "output/solutions/i1.txt";
-        String outputFileForPython = "output/plotting/i1.txt";
-        */
+
+        //String instance = args[0];
+        String instance = "i1.txt";
+        String instanceFile = "input/instances/" + instance;
+        String distancesFile = "input/distances/" + instance;
+        String outputFile = "output/solutions/" + instance;
+        String outputFileForPython = "output/plotting/" + instance;
+
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
 
+        double[] lastBestSavedSolutionParameters = problem.importLastSavedSolution(outputFile);
+
         Solution initialSolution = problem.greedyAlg();
         System.out.println(initialSolution.toString());
-        //initialSolution.printToFile(outputFile);
-        //Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
 
         Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
         System.out.println(optimizedSolution.toString());
-        optimizedSolution.printToFile(outputFile);
-        Util.printSolutionOnlyCustomerIndices(optimizedSolution, outputFileForPython);
 
+        double[] currentSolutionParameters = optimizedSolution.getParameters();
+        if (problem.checkIfNewSolutionIsBetter(lastBestSavedSolutionParameters, currentSolutionParameters)){
+            System.out.println("Better solution found, saving solution");
+            optimizedSolution.printToFile(outputFile);
+            Util.printSolutionOnlyCustomerIndices(optimizedSolution, outputFileForPython);
+        }
     }
 
     private Solution simulatedAnnealingOptimization(Solution initialSolution) {
@@ -263,6 +263,25 @@ public class Problem {
         }
     }
 
+    private double[] importLastSavedSolution(String filePath) {
+        double[] previousSolution = new double[2];
+        try {
+            Path path = Paths.get(filePath);
+            BufferedReader reader = new BufferedReader(Files.newBufferedReader(path));
+            String firstLine = reader.readLine();
+            int vehicleCount = Integer.parseInt(firstLine);
+            for (int i=0; i<vehicleCount; i++){
+                reader.readLine();
+            }
+            double routeLength = Double.parseDouble(reader.readLine());
+            previousSolution[0] = Double.valueOf(vehicleCount);
+            previousSolution[1] = routeLength;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return previousSolution;
+    }
+
     private void importDistanceMatrix(String distancesFile) {
         try {
             Path path = Paths.get(distancesFile);
@@ -301,6 +320,12 @@ public class Problem {
         newVehicles[0] = newVehicle1;
         newVehicles[1] = newVehicle2;
         return newVehicles;
+    }
+
+    private boolean checkIfNewSolutionIsBetter(double[] previousSolutionParams, double[] newSolutionParams) {
+        if (newSolutionParams[0] < previousSolutionParams[0]) return true;
+        if (newSolutionParams[1] < previousSolutionParams[1]) return true;
+        return false;
     }
 
 }

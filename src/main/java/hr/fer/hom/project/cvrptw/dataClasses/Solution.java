@@ -131,4 +131,11 @@ public class Solution {
 
         return stringBuilder.toString();
     }
+
+    public double[] getParameters() {
+        double[] parameters = new double[2];
+        parameters[0] = Double.valueOf(this.getVehiclesUsedCount());
+        parameters[1] = this.getTotalDistance();
+        return  parameters;
+    }
 }
