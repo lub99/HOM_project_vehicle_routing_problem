@@ -19,6 +19,24 @@ public class Solution {
 
     private Double totalDistance;
     private List<Vehicle> vehiclesUsed;
+    private Integer numberOfIter;
+    private Double finalTempSA;
+
+    public Integer getNumberOfIter() {
+        return numberOfIter;
+    }
+
+    public void setNumberOfIter(Integer numberOfIter) {
+        this.numberOfIter = numberOfIter;
+    }
+
+    public Double getFinalTempSA() {
+        return finalTempSA;
+    }
+
+    public void setFinalTempSA(Double finalTempSA) {
+        this.finalTempSA = finalTempSA;
+    }
 
     public Solution() {
     }
