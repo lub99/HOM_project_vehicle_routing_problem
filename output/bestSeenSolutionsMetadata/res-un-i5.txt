@@ -1,0 +1,9 @@
+greedyParamForFarthestCustomer=600
+greedyParamForClosestCustomer=6
+initialTemperature=100
+finalTemperature=0.01
+beta=2.5E-4
+MAX_ITER=10000
+MAX_ITER_NO_IMPROVEMENT=250
+ number_of_iterations=9458534
+final_SA_temp=4.6403712296983795
