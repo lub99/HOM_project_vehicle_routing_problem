@@ -27,7 +27,7 @@ public class Problem {
     private int greedyParamForFarthestCustomer; // = 150;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
     private final int greedyParamForClosestCustomer = 5;
     //75 i 3 najbolje za i1
-    private final int initialTemperature = 50;  //25
+    private final int initialTemperature = 70;  //25
     private final double finalTemperature = 0.01;
     private final double beta = 0.001;
     private final int MAX_ITER = 10000;
@@ -53,7 +53,7 @@ public class Problem {
         String instanceFile = "input/instances/" + inputFileName;
         String distancesFile = "input/distances/" + inputFileName;
         String outputFile = "output/solutions/" + outputFileName;
-        String outputFileBestSeenSolutionParams = "output/bestSeenSolutionsParams/" + outputFileName;
+        String outputFileBestSeenSolutionParams = "output/bestSeenSolutionsMetadata/" + outputFileName;
         String outputFileForPython = "output/plotting/" + outputFileName;
 
         problem.importData(instanceFile);
