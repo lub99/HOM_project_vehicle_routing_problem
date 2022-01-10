@@ -36,6 +36,4 @@ out/
 .vscode/
 
 
-output/
-
-visualisation/analytical_output/
+###output/

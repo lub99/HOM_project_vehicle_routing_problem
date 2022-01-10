@@ -2,6 +2,7 @@ package hr.fer.hom.project.cvrptw.dataClasses;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Vehicle {
@@ -58,7 +59,7 @@ public class Vehicle {
     public Customer getDepot() { return route.get(0).getCustomer(); }
 
     //skladiste se broji samo na pocetku
-    public int getNumberOfCustomersInRoute() { return route.size(); }
+    public int getNumberOfCustomersInRoute() { return route.size()-1; }
 
     public void setRouteTime(int time) {
         this.routeTime = time;
@@ -124,7 +125,8 @@ public class Vehicle {
             return returnStatement;
         }
         returnStatement[0] = 1;
-        returnStatement[1] = timeOfReturnToDepot;
+        //returnStatement[1] = timeOfReturnToDepot;
+        returnStatement[1] = potentialArrivalToNextCustomer + nextCustomer.getServiceTime();
         return returnStatement;
     }
     /*
@@ -134,7 +136,7 @@ public class Vehicle {
     Prihvacaju se indexi od 1 do duljine rute?
      */
     public Vehicle insertCustomerAtIndex(Customer customer, int index){
-        if (index > this.getNumberOfCustomersInRoute()) return this;
+        if (index > this.getRoute().size()) return this;
         int[] addingPossible;
         Vehicle newVehicle = new Vehicle(this.vehicleIndex, this.capacityLimit, this.getDepot(), this.distances);
         for (int i=1; i<=this.route.size(); i++){
@@ -201,6 +203,15 @@ public class Vehicle {
     /*
     Relocate intra operator
      */
+    public Vehicle relocateCustomer(CustomerCalc customer, int index){
+        if (customer.getCustomer().getCustomerIndex() == 0) return this;
+        if (index > this.route.size()-1) return this;
+        Vehicle vehicleWithoutCustomer = this.removeFromRoute(customer);
+        Vehicle newVehicle = vehicleWithoutCustomer.insertCustomerAtIndex(customer.getCustomer(), index);
+        boolean vehicleAdded = newVehicle.replaceSuccessful(vehicleWithoutCustomer);
+        if (!vehicleAdded) return this;
+        return newVehicle;
+    }
 
     /*
     Racunanje centroida od jedne rute
@@ -246,12 +257,9 @@ public class Vehicle {
         return true;
     }
 
-    /*
-    ...druge ideje
-     */
-
-
-    public boolean onlyDepotsInRoute(){
-        return false;
+    public CustomerCalc chooseRandomCustomerFromRouteNotDepot() {
+        var customerIndex = new Random().nextInt(route.size() - 2) + 1;
+        return route.get(customerIndex);
     }
+
 }

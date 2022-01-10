@@ -1,9 +1,9 @@
 package hr.fer.hom.project.cvrptw.dataClasses;
 
+import hr.fer.hom.project.cvrptw.Timer;
 import hr.fer.hom.project.cvrptw.utils.Util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,18 +18,19 @@ public class Problem {
     private int customerCount;
     private List<Customer> customers;
     private List<CustomerCalc> customersCalcs;
-    private Customer depot; //-> takoder prvi korisnik u gornjoj listi
+    private Customer depot;
     private double[][] distances;
     private int vehicleLimit;
     private int vehicleCapacity;
-    //private int vehiclesUsed;
     private List<Vehicle> vehicles;
     private List<Integer> unservedCustomerIndexes;
-    private final int greedyParamForFarthestCustomer = 10;  //mijenjati ovisno o instanci (povecati proporc broju korisnika)
-    private final int greedyParamForClosestCustomer = 5;
-    //75 i 5 najbolje za i1, neka bude 10 i 5 zasad
+    private int greedyParamForFarthestCustomer;
+    private final int greedyParamForClosestCustomer = 6;
     private final int initialTemperature = 100;
-    private final int MAX_ITER = 10;
+    private final double finalTemperature = 0.01;
+    private final double beta = 0.00025;
+    private final int MAX_ITER_NO_IMPROVEMENT = 250;
+    private Timer timer;
 
     public Problem() {
     }
@@ -38,44 +39,95 @@ public class Problem {
 
         Problem problem = new Problem();
 
-        String instanceFile = args[0]; //"input/instances/i1.txt";
-        String distancesFile = args[1]; //"input/distances/i1.txt";
-        String outputFile = args[2];  //"output/solutions/i1.txt";
-        String outputFileForPython = args[3];  //"output/plotting/i1.txt";
-        /*
-        String instanceFile = "input/instances/i1.txt";
-        String distancesFile = "input/distances/i1.txt";
-        String outputFile = "output/solutions/i1.txt";
-        //String outputFileForPython = "output/plotting/i1.txt";
-*/
+        //int instanceIndex = Integer.parseInt(args[0]);
+        //int timeLimit = Integer.parseInt(args[1]);
+        int instanceIndex = 5;
+        int timeLimit = 3;
+        String printTime = null;
+        if (timeLimit > 5){
+            printTime = "un";
+        }else{
+            printTime = timeLimit + "m";
+        }
+        problem.setTimer(timeLimit);
+        String inputFileName = "i" + instanceIndex + ".txt";
+        String outputFileName = "res-" + printTime + "-i" + instanceIndex + ".txt";
+
+        String instanceFile = "input/instances/" + inputFileName;
+        String distancesFile = "input/distances/" + inputFileName;
+        String outputFile = "output/solutions/" + outputFileName;
+        String outputFileBestSeenSolutionParams = "output/bestSeenSolutionsMetadata/" + outputFileName;
+        String outputFileForPython = "output/plotting/" + outputFileName;
+
         problem.importData(instanceFile);
         problem.importDistanceMatrix(distancesFile);
+
+        boolean previousSolutionExists = problem.checkIfSomeSolutionExists(outputFile);
+        double[] lastBestSavedSolutionParameters = null;
+        if (previousSolutionExists) {
+            lastBestSavedSolutionParameters = problem.importLastSavedSolution(outputFile);
+        }
+
         Solution initialSolution = problem.greedyAlg();
-        initialSolution.printToFile(outputFile);
-        Util.printSolutionOnlyCustomerIndices(initialSolution, outputFileForPython);
+        System.out.println(initialSolution.toString());
 
         Solution optimizedSolution = problem.simulatedAnnealingOptimization(initialSolution);
+        System.out.println(optimizedSolution.toString());
 
+        double[] currentSolutionParameters = optimizedSolution.getParameters();
+        if (!previousSolutionExists) {
+            System.out.println("New solution found, saving solution");
+            optimizedSolution.printToFile(outputFile);
+            problem.printToFile(outputFileBestSeenSolutionParams, problem.toString()
+                    + "\n number_of_iterations=" + optimizedSolution.getNumberOfIter() + "\n" +
+                    "final_SA_temp=" + optimizedSolution.getFinalTempSA()
+            );
+            Util.printSolutionOnlyCustomerIndices(optimizedSolution, outputFileForPython);
+        } else {
+            if (problem.checkIfNewSolutionIsBetter(lastBestSavedSolutionParameters, currentSolutionParameters)) {
+                System.out.println("Better solution found, saving solution");
+                optimizedSolution.printToFile(outputFile);
+                problem.printToFile(outputFileBestSeenSolutionParams, problem.toString()
+                        + "\n number_of_iterations=" + optimizedSolution.getNumberOfIter() + "\n" +
+                        "final_SA_temp=" + optimizedSolution.getFinalTempSA()
+                );
+                Util.printSolutionOnlyCustomerIndices(optimizedSolution, outputFileForPython);
+            }
+        }
     }
 
-    /*
-        current_solution = initial_solution;
-        best_solution = current_solution;
-        current_temperature = initial_temperature
-        while(!termination_criterion){ //broj iteracija
-             new_solution = select neighbor -> primijeniti niz operatora
-             if (f(new_solution) < f(current_solution)) current_solution = new_solution
-             else if (f(new_solution) >= f(current_solution)) and (rand(0,1) < Math.pow(e, -df/current_temperature)
-                  current_solution = new_solution
-             if (f(current_solution) < f(best_solution)) best_solution = current_solution
-             update current_temperature
-        }
-        return best_solution;
-         */
     private Solution simulatedAnnealingOptimization(Solution initialSolution) {
-        List<Vehicle> vehicles = initialSolution.getVehiclesUsed();
-
-        return null;
+        Solution currentSolution = initialSolution.copy();
+        Solution bestSolution = initialSolution.copy();
+        double currentTemperature = initialTemperature;
+        int iter = 0;
+        int no_improvement_iters = 0;
+        NeighborhoodGenerator neighborhoodGenerator = new NeighborhoodGenerator();
+        while (System.currentTimeMillis() < this.timer.getEnd()) {  //){ //currentTemperature > finalTemperature
+            if (no_improvement_iters >= MAX_ITER_NO_IMPROVEMENT) {
+                neighborhoodGenerator.setPreviousSolution(bestSolution);
+            } else {
+                neighborhoodGenerator.setPreviousSolution(currentSolution);
+            }
+            Solution newSolution = neighborhoodGenerator.selectNeighbor();
+            if (currentSolution.checkIfNewSolutionIsBetterPlus(newSolution)) {
+                currentSolution = newSolution.copy();
+            } else if (checkTemperatureCondition(currentSolution, newSolution, currentTemperature)) {
+                currentSolution = newSolution.copy();
+            }
+            if (bestSolution.checkIfNewSolutionIsBetter(currentSolution)) {
+                bestSolution = currentSolution.copy();
+                currentTemperature /= (1 + this.beta * currentTemperature);
+                no_improvement_iters = 0;
+            }
+            iter++;
+            no_improvement_iters++;
+        }
+        System.out.println("Number of iterations: " + iter);
+        System.out.println("Final temperature: " + currentTemperature);
+        bestSolution.setNumberOfIter(iter);
+        bestSolution.setFinalTempSA(currentTemperature);
+        return bestSolution;
     }
 
     private Solution greedyAlg() {
@@ -110,8 +162,6 @@ public class Problem {
             System.out.println("Infeasible solution, unserved customers exist");
         }
         solution.setVehiclesUsed(vehicles);
-        System.out.println(solution);
-
         return solution;
     }
 
@@ -154,7 +204,7 @@ public class Problem {
     private Customer findBestFirstCustomerFromDepot(int[] sortedIndexes) {
         int unservedCustomersFound = 0;
         List<Customer> candidateCustomers = new ArrayList<>();
-        for (int i = sortedIndexes.length-1; i >=0; i--) {
+        for (int i = sortedIndexes.length - 1; i >= 0; i--) {
             Customer customer = this.customers.get(sortedIndexes[i]);
             if (!customer.isServed()) {
                 candidateCustomers.add(customer);
@@ -165,7 +215,7 @@ public class Problem {
         int minReadyTime = Integer.MAX_VALUE;
         Customer bestFound = null;
         for (Customer customer : candidateCustomers) {
-            if (customer.getReadyTime() < minReadyTime){
+            if (customer.getReadyTime() < minReadyTime) {
                 minReadyTime = customer.getReadyTime();
                 bestFound = customer;
             }
@@ -185,6 +235,12 @@ public class Problem {
                 .mapToInt(ele -> ele).boxed().collect(Collectors.toList());
         sortedIndices.remove(0);
         return sortedIndices.stream().mapToInt(i -> i).toArray();
+    }
+
+    private boolean checkTemperatureCondition(Solution currentSolution, Solution newSolution, double temp) {
+        double df = currentSolution.getTotalDistance() - newSolution.getTotalDistance();
+        double num = Math.exp(df / temp);
+        return Math.random() < num;
     }
 
     private void importData(String instance) {
@@ -221,10 +277,30 @@ public class Problem {
                 row_num++;
             }
             this.customerCount = this.customers.size();
+            this.greedyParamForFarthestCustomer = (int) ((double) this.customerCount * 0.75);
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private double[] importLastSavedSolution(String filePath) {
+        double[] previousSolution = new double[2];
+        try {
+            Path path = Paths.get(filePath);
+            BufferedReader reader = new BufferedReader(Files.newBufferedReader(path));
+            String firstLine = reader.readLine();
+            int vehicleCount = Integer.parseInt(firstLine);
+            for (int i = 0; i < vehicleCount; i++) {
+                reader.readLine();
+            }
+            double routeLength = Double.parseDouble(reader.readLine());
+            previousSolution[0] = Double.valueOf(vehicleCount);
+            previousSolution[1] = routeLength;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return previousSolution;
     }
 
     private void importDistanceMatrix(String distancesFile) {
@@ -244,10 +320,14 @@ public class Problem {
         }
     }
 
+    private void setTimer(int factor) {
+        this.timer = new Timer(factor);
+    }
+
     /*
     U vehicle1 stavljamo customer2 i suprotno
      */
-    public Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2){
+    public static Vehicle[] twoCustomerInterSwap(Vehicle vehicle1, Vehicle vehicle2, CustomerCalc customer1, CustomerCalc customer2) {
         Vehicle[] newVehicles = new Vehicle[2];
         newVehicles[0] = vehicle1;
         newVehicles[1] = vehicle2;
@@ -263,4 +343,35 @@ public class Problem {
         return newVehicles;
     }
 
+    private boolean checkIfNewSolutionIsBetter(double[] previousSolutionParams, double[] newSolutionParams) {
+        if (newSolutionParams[0] < previousSolutionParams[0]) return true;
+        if (newSolutionParams[0] == previousSolutionParams[0] &&
+                newSolutionParams[1] < previousSolutionParams[1]) return true;
+        return false;
+    }
+
+    private boolean checkIfSomeSolutionExists(String outputFile) {
+        Path path = Paths.get(outputFile);
+        return Files.exists(path);
+    }
+
+    @Override
+    public String toString() {
+        return "greedyParamForFarthestCustomer=" + greedyParamForFarthestCustomer + "\n" +
+                "greedyParamForClosestCustomer=" + greedyParamForClosestCustomer + "\n" +
+                "initialTemperature=" + initialTemperature + "\n" +
+                "finalTemperature=" + finalTemperature + "\n" +
+                "beta=" + beta + "\n" +
+                "MAX_ITER_NO_IMPROVEMENT=" + MAX_ITER_NO_IMPROVEMENT;
+    }
+
+    public void printToFile(String outputFile, String toPrint) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+            writer.write(toPrint);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
